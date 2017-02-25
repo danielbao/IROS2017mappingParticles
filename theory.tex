@@ -179,7 +179,7 @@ When the mapping is initiated, there will be 4$k$ equally valid destinations tha
 The algorithm arbitrarily choose a direction to move to. 
 Once frontiers are classified, there can be at most three more frontiers added per particle if it has landed on a free space or there will be a reduction of one frontier if the frontier cell contained an obstacle. 
 Since each $moveSeq$ guarantees classification of one frontier node into obstacle or free space. If there are $n$ free spaces, the maximum possible frontier cells count will be $3(n-2)+6$. 
-If for moveSeq generation left,up,right,down is the order of preference for direction of move in case of equidistant nodes, then as an example, for $k$ particles the maximum number of moves required to completely map the linear map environment will be 4($n$-$k$+1) if all the particles are arranged in adjacent cells on the right corner of the linear map. 
+If for moveSeq generation left, up, right, down is the order of preference for direction of move in case of equidistant nodes, then as an example, for $k$ particles the maximum number of moves required to completely map the linear map environment will be 4($n$-$k$+1) if all the particles are arranged in adjacent cells on the right corner of the linear map. 
 The simulation results in Section \ref{sec:simulation} show that both map complexity and distribution affect the number of moves taken to map the work space. In Alg.~\ref{alg:randommove} we used no information from the data except for checking completion. 
 In Alg.~\ref{alg:ElectParticle} we use the location and distance data from one particle to map the work space. 
 Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the mapping by utilizing all the data such as location of all particles and distance measurements from all frontiers. 
@@ -204,7 +204,7 @@ Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the map
 
 Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
 
-The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary.  This is 4(n/k) moves. %1+2(N/K) + 2(N/k -1)+1 = 
+The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary.  This is 4($n/k$) moves. %1+2(N/K) + 2(N/k -1)+1 = 
 
 %Better if particles are in a square with side $\sqrt{N}$ and are in a vertical column spaced $\sqrt{N}/k-1$ apart.  moving left, followed by moving
 
