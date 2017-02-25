@@ -198,13 +198,17 @@ Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the map
 \end{algorithmic}
 \end{algorithm}
 
-\todo{Q7.Prove the greedy algorithm always works }
+\todo{Q7.Prove the greedy algorithm always works 
+Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
+}
 
 %\todo{insert plot of boundary nodes as a function of moves for 3 different values of no. of particles. n=100, n=500 and n=2000} 
 
-Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
 
-The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary.  This is 4($n/k$) moves. %1+2(N/K) + 2(N/k -1)+1 = 
+
+The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 
+1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary. 
+ This is 4($n/k$) moves. %1+2(N/K) + 2(N/k -1)+1 = 
 
 %Better if particles are in a square with side $\sqrt{N}$ and are in a vertical column spaced $\sqrt{N}/k-1$ apart.  moving left, followed by moving
 
