@@ -162,7 +162,6 @@ J.~D. Kahn, N.~Linial, N.~Nisan, and M.~E. Saks, ``On the cover time of random
 
 \bibitem{Arun2017GitHubUniformMapping}
 A.~Mahadev and A.~T. Becker, ``"{Mapping with Particles under Uniform Inputs}",
-  https://github.com/aabecker/ magneticcontroller/tree/master/
-  massiveuniformcontrol/iros2017mapping/code,'' Mar. 2017.
+  https://github.com/roboticswarmcontrol/iros2017mappingparticles,'' Mar. 2017.
 
 \end{thebibliography}
