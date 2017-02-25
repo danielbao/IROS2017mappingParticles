@@ -1,0 +1,80 @@
+%Ideas for "Mapping, Foraging, and Coverage with a Particle Swarm Controlled by Uniform Inputs"
+
+We can analyze our algorithm in other dimensions.  This is particularly easy in 1D.
+ 
+\subsection{Mapping in 1D}
+
+Given a robot initialized uniformly randomly in a linear free-space $m$ units wide.  To map this region the robot needs to choose one direction, move until it hits a boundary, and then switch direction and move until it reaches the other boundary.
+
+
+
+
+Without loss of generality, assume the robot always starts going left, and label the free-space from 1 to $m$ left to right.  If the initial position is 1, the robot tries to move 1 unit to the left, but is stopped by the boundary. The robot then moves $m-1$ moves to the right.  The final $m$th move right results in a collision with the right wall, and thus mapping requires $m+1$ moves. This is the minimum number of moves.  The worst case is if the robot starts at $m$, requiring $2m$ moves: $m$ moves to the left and $m$ moves to the right.
+
+\begin{figure}
+\begin{center}
+	\includegraphics[width=1.0\columnwidth]{MaxGapm20n5s1.pdf}
+\end{center}
+\caption{\label{fig:coverage1d}
+Exploring a 1D environment of size $m$ with $n$ robots.  Here $m=20$ and $n=5$.
+}
+\end{figure}
+
+
+The expected number of moves for one robot to cover a 1D area of length $m$ is 
+\begin{align}
+\frac{1}{m} \sum _{i=1}^m (i+m) &= \frac{3 m+1}{2}  \label{eq:expectedMoves1robot1D}
+\end{align}
+
+
+If $n$ robots are uniformly distributed from $[1, m]$, as shown in Fig. \ref{fig:coverage1d}, the number of moves to discover the left and right boundaries is bounded by the maximum and minimum robots $ \pmin =\min(\mathbf{p})$, $\pmax =\max(\mathbf{p})$, requiring moving left $\pmin$, followed by a move of $m-(\pmax - \pmin ) $ right.
+When $n=m$, the algorithm requires 2 moves, one left, one right.
+The minimum time with $n\in[2,m-1]$ occurs with $\pmin$ at 1 and the $\pmax$ at $m$, requiring 3 moves, 1 left followed by 2 moves to the right.  
+
+The maximum $2(m-n+1)$ occurs when the robots are arranged from $m-n$ to $m$, requiring $m-n+1$ moves to the left, followed by $m-n+1$ moves to the right.
+
+This is drawing without replacement $n$ times from the set $[1, m]$.  The minimum is distributed between 1 and $m-n$, the maximum is distributed between $n$ and $m$.
+
+The expected number of moves to reach both boundaries for $n$ robots in 1D is 
+\begin{align}
+\frac{1}{{m \choose n}} \sum_{\pmin = 1}^{m-n+1}  \sum_{\pmax = \pmin +n-1}^{m}   {\pmax -\pmin-1 \choose n-2} \left( 2 \pmin +m- \pmax +1\right)  \nonumber \\
+= \frac{3(1+m)}{1+n}\label{eq:expectedMoveskrobots1D}
+\end{align}
+
+To fully \emph{cover} the area from 1 to $m$ requires that every position from 1 to $m$ be visited by at least one particle.  This time is dominated by the maximum gap $\overline{g}$. The total number of moves is then $ 2 \pmin +m- \pmax +1 + \max \left( \overline{g} - \left(\pmin + m-\pmax \right),0 \right)$.
+
+
+ If all the particles are unit size, there are $m-n$ spaces, and these can be located before, between, or after the $n$ particles in $n+1$ locations giving ${m-n \choose n+1}$ possible configurations. The largest gap can be calculated exactly using a recurrence equation \citep{reviriego2011expected}, but a tight bound when
+$m>n \log{n}$ is $\frac{m-n}{n+1} + \Theta \left( \sqrt{\frac{ (m-n)\log(n+1)}{n+1}} \right)$\citep{Raab1998}. 
+
+\todo{I want an analytical result for the expected maximum gap. An analytical result for the maximum gap is given in \url{http://www.nebrija.es/~jmaestro/esa/papers/JDA2011.pdf}, but I have been unable to solve the coefficients in equation (18).  The same result is also in Section 9.4 of An Introduction to the Analysis of Algorithms, Second Edition by Robert Sedgewick and Philippe Flajolet, which I have ordered but don't have yet. -Aaron}
+
+
+%\subsubsection{German tank problem}
+%With multiple samples it is now possible to guess which direction is closer to the edge?  The population maximum is 
+%uniformly minimum-variance unbiased estimator "The sample maximum plus the average gap between observations in the sample" --> but this will give the same distance to each side.  
+
+\subsection{Mapping in 2D}
+
+Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
+
+The minimum time is a rectangle $k$ units tall and $N/k$ wide, with the robots arranged along the left wall. 1 move left registers the left wall, repeating $N/k$ moves up and right to find the top boundary and the right boundary,  followed by $N/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary.  This is 4(N/k) moves. %1+2(N/K) + 2(N/k -1)+1 = 
+
+%Better if robots are in a square with side $\sqrt{N}$ and are in a vertical column spaced $\sqrt{N}/k-1$ apart.  moving left, followed by moving
+
+What is the worst case?  
+
+
+\subsection{Mapping in 3D}
+
+
+We can do some experiments for this.  Perhaps draw wireframes for free spaces, draw red and blue cubes for unknown.  
+TODO: draw with red circles/spheres for robots.
+
+Define the probability of any given combination $T= {m \choose n}^{-1}$.  
+
+If $n+1 = m$ there is one gap of size $1$, and $n+1$ possible locations.
+The maximum gap size is $m-n$, and this gap can be placed before or after any of the $n$  numbers, for a total of $n+1$ possible positions.
+
+
+

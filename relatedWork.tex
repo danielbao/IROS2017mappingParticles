@@ -1,0 +1,21 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}\label{sec:RelatedWork}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Coverage using one robot is a canonical robotics problem \cite{choset2001coverage}. It has been studied in-depth for applications include lawn mowing, harvesting, floor cleaning, 3D printing, robotic painting and others. 
+
+Coverage means the robot has passed within $d/2$ of every location in the workspace where $d/2$ is the radius of the robot's footprint. Coverage with a swarm of robots is a key ability for a range of applications because swarms have higher fault tolerance and reduce completion time. Correspondingly, it has been studied from a control-theoretic perspective in  both centralized and decentralized approaches. For examples of each, see  CITE, and \cite{wagner1999distributed} where the coverage is performed in such a way that robots are not aware of each other's existence but always cover a cell that is a non-critical point which does not disconnect the graph. 
+
+Previous methods focus mostly on extending  single robot coverage techniques to multi-robot systems. Solving coverage for synchronous multi-robots using on-line coverage techniques such as the Boustrophedon technique of subdividing the 2D space into cells as in \cite{latimer2002towards} focuses on moving the robot teams in unison until they identify obstacles in their path. Once that happens, the team divides into smaller teams that continue the search in the smaller cells. This method closely resembles our approach in the sense that robots try to move in the same direction as long as possible. In our problem of interest the particles will always move in the same direction.  
+The frontier cells exploration mentioned in \cite{yamauchi1998frontier} is an algorithm that is highly explorative as target locations to expand are selected using information from each robot, and the robot's vicinity. Many algorithms have been developed after this pioneering work, and it showed how algorithms for single robot could be expanded to multi-robot systems. The explorative bias of the technique allows it to define target cells of high priority to explore.   
+
+
+However, these approaches assume a level of intelligence and autonomy in individual robots that exceeds the capabilities of many systems, including current micro- and nano-robots.  Current micro- and nano-robots, such as those in~\cite{Chowdhury2015,martel2015magnetotactic,Xiaohui2015magnetiteMicroswimmers} cannot have onboard computation. So we will be referring to them as particles in this paper.
+
+Instead, this paper focuses on centralized techniques that apply the same control input to each member of the swarm.%In \cite{shahrokhi2016algorithms}, global control is used to shape a swarm and the convenience and mass is controlled to use swarms for high accuracy assembly. The algorithms showcased in this work show how environmental factors such as wall friction can be used to shape swarms. The usage of limited parameters to control a large swarm gives us insight into how planning must be approached for problems where large number of globally controlled robots must be used. By following the covariance of a swarm, we can see how dispersed a swarm is. This will be useful for us to determine how explorative our algorithms are, when searching the workspace.   
+%Precision control requires breaking the symmetry caused by the global input.
+
+%Symmetry can be broken using agents that respond differently to the global control, either through agent-agent reactions, see work modeling biological swarms \cite{bertozzi2015ring}, or engineered inhomogeneity  \cite{Donald2013,bretl2007,beckerIJRR2014}.
+%This work assumes a uniform control with homogenous agents, as in~\cite{Becker2013b}. 
+

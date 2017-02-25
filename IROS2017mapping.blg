@@ -1,0 +1,60 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: IROS2017mapping.aux
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: IEEEabrv.bib
+Database file #2: bib/uniformMapping.bib
+-- IEEEtran.bst version 1.13 (2008/09/30) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--empty journal in latimer2002towards
+Warning--empty journal in yamauchi1998frontier
+
+Done.
+You've used 25 entries,
+            4039 wiz_defined-function locations,
+            1381 strings with 20621 characters,
+and the built_in function-call counts, 22691 in all, are:
+= -- 1888
+> -- 558
+< -- 243
++ -- 318
+- -- 88
+* -- 1135
+:= -- 3315
+add.period$ -- 52
+call.type$ -- 25
+change.case$ -- 24
+chr.to.int$ -- 555
+cite$ -- 27
+duplicate$ -- 1546
+empty$ -- 1643
+format.name$ -- 109
+if$ -- 5235
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 255
+newline$ -- 106
+num.names$ -- 25
+pop$ -- 529
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 1744
+stack$ -- 0
+substring$ -- 1317
+swap$ -- 1407
+text.length$ -- 58
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 25
+warning$ -- 2
+while$ -- 114
+width$ -- 27
+write$ -- 288
+(There were 2 warnings)

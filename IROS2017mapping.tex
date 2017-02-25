@@ -1,0 +1,211 @@
+%  compress using: gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH      -sOutputFile=IROS2017mappingComp.pdf IROS2017mapping.pdf
+
+%\documentclass[conference]{IEEEtran}
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+\IEEEoverridecommandlockouts% This command is only needed if 
+                                                          % you want to use the \thanks command
+%\overrideIEEEmargins                                      % Needed to meet printer requirements.
+\usepackage{times}
+
+
+\makeatletter 
+\let\NAT@parse\undefined
+\makeatother
+
+% numbers option provides compact numerical references in the text. 
+%\usepackage[numbers]{natbib}
+\usepackage{multicol}
+\usepackage[bookmarks=true]{hyperref}
+
+\usepackage{bbm}
+\usepackage{calc}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks =false,
+  urlcolor = black,
+  linkcolor = black
+}
+\usepackage{graphicx}
+\usepackage[cmex10]{amsmath}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{rotating}
+\usepackage{balance}
+\usepackage{chngcntr}
+\counterwithin{paragraph}{subsection} % makes paragraph depend on subsection
+
+
+%\usepackage{xfrac}
+\usepackage{nicefrac}
+\usepackage{cite}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage[usenames, dvipsnames]{color}
+\usepackage{colortbl}
+\usepackage{overpic}
+\graphicspath{{./pictures/pdf/},{./pictures/ps/},{./pictures/png/},{./pictures/jpg/}}
+\usepackage{breqn} %for breaking equations automatically
+\usepackage[ruled]{algorithm}
+\usepackage{algpseudocode}
+%\usepackage{algorithmic}
+\usepackage{multirow}
+%\usepackage{todonotes}
+\usepackage{authblk}
+
+\newcommand{\todo}[1]{\vspace{5 mm}\par \noindent \framebox{\begin{minipage}[c]{0.98 \columnwidth} \ttfamily\flushleft \textcolor{red}{#1}\end{minipage}}\vspace{5 mm}\par}
+% uncomment this to hide all red todos
+%\renewcommand{\todo}{}
+
+%% ABBREVIATIONS
+\newcommand{\qstart}{q_{\text{start}}}
+
+%% MACROS
+
+\providecommand{\pmax}{ \overline{p} }   %p_{\text{max}}
+\providecommand{\pmin}{ \underline{p} }   %p_{\text{min}}
+\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\normn}[2]{\left\lVert#1\right\rVert_#2}
+\providecommand{\dualnorm}[1]{\norm{#1}_\ast}
+\providecommand{\dualnormn}[2]{\norm{#1}_{#2\ast}}
+\providecommand{\set}[1]{\lbrace\,#1\,\rbrace}
+\providecommand{\cset}[2]{\lbrace\,{#1}\nobreak\mid\nobreak{#2}\,\rbrace}
+\providecommand{\lscal}{<}
+\providecommand{\gscal}{>}
+\providecommand{\lvect}{\prec}
+\providecommand{\gvect}{\succ}
+\providecommand{\leqscal}{\leq}
+\providecommand{\geqscal}{\geq}
+\providecommand{\leqvect}{\preceq}
+\providecommand{\geqvect}{\succeq}
+\providecommand{\onevect}{\mathbf{1}}
+\providecommand{\zerovect}{\mathbf{0}}
+\providecommand{\field}[1]{\mathbb{#1}}
+\providecommand{\C}{\field{C}}
+\providecommand{\R}{\field{R}}
+\newcommand{\Cspace}{\mathcal{Q}}
+\newcommand{\Uspace}{\mathcal{U}}
+\providecommand{\Fspace}{\Cspace_\text{free}}
+\providecommand{\Hcal}{$\mathcal{H}$}
+\providecommand{\Vcal}{$\mathcal{V}$}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\cone}{cone}
+\DeclareMathOperator{\homog}{homog}
+\DeclareMathOperator{\domain}{dom}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\sign}{sgn}
+\providecommand{\polar}{\triangle}
+\providecommand{\ainner}{\underline{a}}
+\providecommand{\aouter}{\overline{a}}
+\providecommand{\binner}{\underline{b}}
+\providecommand{\bouter}{\overline{b}}
+\newcommand{\D}{\nobreakdash-\textsc{d}}
+%\newcommand{\Fspace}{\mathcal{F}}
+\providecommand{\Fspace}{\Cspace_\text{free}}
+\providecommand{\free}{\text{\{}\mathsf{free}\text{\}}}
+\providecommand{\iff}{\Leftrightarrow}
+\providecommand{\subinner}[1]{#1_{\text{inner}}}
+\providecommand{\subouter}[1]{#1_{\text{outer}}}
+\providecommand{\Ppoly}{\mathcal{X}}
+\providecommand{\Pproj}{\mathcal{Y}}
+\providecommand{\Pinner}{\subinner{\Pproj}}
+\providecommand{\Pouter}{\subouter{\Pproj}}
+\DeclareMathOperator{\argmax}{arg\,max}
+\providecommand{\Aineq}{B}
+\providecommand{\Aeq}{A}
+\providecommand{\bineq}{u}
+\providecommand{\beq}{t}
+\DeclareMathOperator{\area}{area}
+\newcommand{\contact}[1]{\Cspace_{#1}}
+\newcommand{\feasible}[1]{\Fspace_{#1}}
+\newcommand{\dd}{\; \mathrm{d}}
+\newcommand{\figwid}{0.22\columnwidth}
+\newcommand{\TRUE}{\textbf{true}}
+\newcommand{\FALSE}{\textbf{false}}
+\DeclareMathOperator{\atan2}{atan2}
+\allowdisplaybreaks
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+
+
+\pdfinfo{
+   /Author (Arun Mahadev, Dominik Krupke, S\'{a}ndor Fekete, and Aaron T. Becker)
+   /Title  (Mapping, Foraging, and Coverage with a Particle Swarm Controlled by Uniform Inputs)
+   /CreationDate (D:20160129120000)
+   /Subject (Simple Robots)
+   /Keywords (Robots;Uniform Control Inputs)
+}
+
+
+% paper title
+\title{\LARGE \bf Mapping, Foraging, and Coverage\\ with a Particle Swarm Controlled by Uniform Inputs}
+
+% You will get a Paper-ID when submitting a pdf file to the conference system
+\author{Arun Mahadev, Dominik Krupke, S\'{a}ndor Fekete, and Aaron T. Becker% <-this % stops a space
+\thanks{*This work was supported by the National Science Foundation under Grant No.\ \href{http://nsf.gov/awardsearch/showAward?AWD_ID=1553063}{ [IIS-1553063]} and \href{http://nsf.gov/awardsearch/showAward?AWD_ID=1619278}{[IIS-1619278]}.}% <-this % stops a space
+\thanks{{A.~Mahadev and A.~Becker are with the Department of Electrical and Computer Engineering,  University of Houston, Houston, TX 77204-4005 USA 
+      \protect\url{ aviswanathanmahadev@uh.edu,atbecker@uh.edu }
+S.~Fekete and D.~Krupke are with the Dept.~of Computer Science, TU Braunschweig,  M\"uhlenpfordtstr.~23, 38106 Braunschweig, Germany,
+      \protect\url{s.fekete@tu-bs.de,d.krupke@tu-bs.de  }
+}
+} %\end thanks%
+}
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+\begin{abstract}
+Consider a swarm of particles in a 1D or 2D grid that can be tracked and controlled by an external agent, but control inputs are applied uniformly so that each particle experiences the same applied forces. 
+This paper presents algorithms for (1) mapping: building a representation of the free and obstacle regions of the workspace;
+(2) foraging: ensuring at least one particle reaches each of a set of desired locations; 
+and (3) coverage: ensuring every free region on the map is visited by at least one particle.
+
+These algorithms extend to any number of particles, and show that additional particles reduce the time required for each task.  In the limit, as the particle count increases, the time reduces to four moves for mapping and zero moves for foraging and coverage. 
+
+%Algorithms are tested in simulation, and validated with hardware experiments using magnetically steered paramagnetic particles.
+These methods may have particular relevance for fast MRI scans with magnetically controlled contrast media.
+
+% KEYWORDS:   uniform control, under-actuation, particle swarm
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+%%%%%%%%%%%%%%%
+\input{intro}
+%\input{IdeasForPaper}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+\input{relatedWork}
+%%%%%%%%%%%%%%%
+\input{theory}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+\input{simulation}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%\input{experiment}   % sadly, no experiment
+%%%%%%%%%%%%%%%
+\input{conclusion}
+%%%%%%%%%%%%%%%
+%\section*{Acknowledgments}
+%We thank Haoran Zhao, Jarrett Lonsford, An Nguyen, and Lillian Lin for help in making structures for the experiments. 
+%Withheld for double-blind review
+%%%%%%%%%%%%%%%
+%% Use plainnat to work nicely with natbib. 
+
+%\bibliographystyle{plainnat}
+%\bibliographystyle{SageH}
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,bib/uniformMapping}
+
+
+% Uncomment to add appendix:
+%\input{appendix}
+
+\end{document}
