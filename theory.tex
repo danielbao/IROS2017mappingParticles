@@ -113,7 +113,13 @@ Because $j\leq \log D/ W(\log D)$, we obtain
 \begin{align}
 \frac{(j+1)^{(j+1)}}{j^j}\leq \mathrm{e}\frac{log n}{ W(\log n)}+\mathrm{e}\label{eq:MoveDistanceRatioInequality}
 \end{align}
- for $j>0$. Clearly, this is again in within a factor of $\Theta(\log D/ \log\log D)+1$ of the optimum.
+ for $j>0$. Clearly, this is again in within a factor of $\Theta(\log D/ \log\log D)$ of the optimum.
+
+To see that this balanced factor is best possible, observe that $\left(\frac{\log D}{\log\log D}\right)^{\left(\frac{\log D}{\log\log D}\right)}\in \Theta(D)$,
+with the base corresponding to the ratio between step lengths and the exponent to the number of scans.
+Therefore, using significantly fewer than $\log D/ \log\log D$ scans would require increasing the base, yielding a worse competitive factor
+for the step length; on the other hand, decreasing the base in order to decrease the competitive factor
+for the step length would require increasig the exponent, yielding a worse competitive factor for the scan cost.
 \end{proof}
 
 %\subsubsection{German tank problem}
