@@ -10,8 +10,31 @@ Coverage means the robot has passed within $d/2$ of every location in the worksp
 Previous methods focus mostly on extending  single robot coverage techniques to multi-robot systems. Solving coverage for synchronous multi-robots using on-line coverage techniques such as the Boustrophedon technique of subdividing the 2D space into cells as in \cite{latimer2002towards} focuses on moving the robot teams in unison until they identify obstacles in their path. Once that happens, the team divides into smaller teams that continue the search in the smaller cells. This method closely resembles our approach in the sense that robots try to move in the same direction as long as possible. In our problem of interest the particles will always move in the same direction.  
 The frontier cells exploration mentioned in \cite{yamauchi1998frontier} is an algorithm that is highly explorative as target locations to expand are selected using information from each robot, and the robot's vicinity. Many algorithms have been developed after this pioneering work, and it showed how algorithms for single robot could be expanded to multi-robot systems. The explorative bias of the technique allows it to define target cells of high priority to explore.   
 
+Fundamental problems of robot navigation in an unknown environment have also received a large amount of attention from the theoretical side.
+The classic prototype is the {\em linear-search problem}, which was first proposed by Bellman \cite{B63} and, independently,
+by Beck\cite{B64}: An (immobile) object is located on the real line at an unknown distance $D$ and in an unknown direction.
+Because the time necessary for locating the object may be arbitrarily high (as the object may be hidden far
+from the origin), a useful measure for the performance of a search strategy
+is the {\em competitive ratio}: This is the supremum of the ratio
+between the time the searcher actually travels and the time she would have
+taken if she had known the hiding place. The competitive ratio is
+a standard notion in the context of online algorithms; see \cite{FW98}
+for a comprehensive overview. For the linear-search problem, the optimal competitive ratio is 9,
+as was first shown by Beck and Newman \cite{BN70} and generalized by Gal~\cite{G72,G74}: The search should alternate
+between going to the right and to the left, at each iteration doubling
+her step size. This can be extended to other scenarios: For the case in which changing direction during the course 
+of the search incurs an additional cost of $d$, Demaine et al.~\cite{dfg-olstc-06} showed that an optimal strategy can achieve
+locate an object with total cost $9D+2d$, which is optimal; see Arkin et al.~\cite{abd+-octtc-05} for the generalized
+offline problem of covering with turn cost. Other related algorithmic work in an unknown setting includes Kao et al.~\cite{KRT96}
+in a randomized setting, Baeza-Yates et al.~\cite{BCR93} for searching in the plane; for broad surveys on mathematical
+methods, see the books by Gal~\cite{G80} and by Alpern and Gal~\cite{AG03}.
+Of particular relevance for the content of this paper is 
+Fekete et al.~\cite{fkn-sar-04,fkn-osar-06} for online searching by an autonomous robot in an unknown environment,
+where both moving and measuring incur individual costs, and Fekete et al.~\cite{fms-mctc-10} for an (offline)
+setting that studies the closely related bicriteria version of covering with travel cost.
+For another recent work on mapping and coverage by a swarm of robot with limited information and capabilities, see~\cite{lfm-stmrs-16}.
 
-However, these approaches assume a level of intelligence and autonomy in individual robots that exceeds the capabilities of many systems, including current micro- and nano-robots.  Current micro- and nano-robots, such as those in~\cite{Chowdhury2015,martel2015magnetotactic,Xiaohui2015magnetiteMicroswimmers} cannot have onboard computation. So we will be referring to them as particles in this paper.
+However, all these approaches assume a level of intelligence and autonomy in individual robots that exceeds the capabilities of many systems, including current micro- and nano-robots.  Current micro- and nano-robots, such as those in~\cite{Chowdhury2015,martel2015magnetotactic,Xiaohui2015magnetiteMicroswimmers} cannot have onboard computation. Thus, we will be referring to them as {\em particles}.
 
 Instead, this paper focuses on centralized techniques that apply the same control input to each member of the swarm.%In \cite{shahrokhi2016algorithms}, global control is used to shape a swarm and the convenience and mass is controlled to use swarms for high accuracy assembly. The algorithms showcased in this work show how environmental factors such as wall friction can be used to shape swarms. The usage of limited parameters to control a large swarm gives us insight into how planning must be approached for problems where large number of globally controlled robots must be used. By following the covariance of a swarm, we can see how dispersed a swarm is. This will be useful for us to determine how explorative our algorithms are, when searching the workspace.   
 %Precision control requires breaking the symmetry caused by the global input.

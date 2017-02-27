@@ -61,42 +61,60 @@ $m>n \log{n}$ is $\frac{m-n}{n+1} + \Theta \left( \sqrt{\frac{ (m-n)\log(n+1)}{n
  Often scanning (imaging) and moving the particles costs time and energy.
  When controlling particles with MRI as in \cite{chanu2008adapting}, the MRI machine iterates between imaging and applying gradient forces to move the particles.
  This section examines 1D mapping when scanning the workspace and moving the particles a unit distance have associated costs. 
- This is a bicriteria problem, where the objective is to minimize the sum of the total costs for movement and scanning.
+The objective is to minimize a linear comination of costs for moving and measuring; however, the precise respective coefficients may be subject
+to change, or even unknown in advance turning this into a {\em bicriteria problem}, in which both parameters need to be within 
+a bounded rato of those in an optimal solution. For simpler notation, we write $(a,b)$ for a schedule that involves $a$ unit steps and $b$ scans.
 
+For a more details analysis, assume that the left boundary is located $D$ units to the left of the leftmost particle.
+(This analysis can be applied in both directions.)
+The theoretically optimal, yet elusive, solution requires scanning the workspace to map particle locations,
+moving $D+1$ units to the left, 
+then scanning to detect that the leftmost particle has only moved $D$ units and thus has encountered the wall,
+for a total cost of $(D+1,2)$ for the schedule.
 
-%\todo{ Q1.Domink and S\'{a}ndor, the tradeoff of running time and scan costs is intriguing.  How do we minimize costs?}
+We can achieve a schedule with $D+1$ steps by scanning after each step, for a total cost of $(D+1,D+2)$;
+while this is optimal with respect to steps, the involved scan cost is large compared to the optimum.
+At the expense of increasing the number of can reduce the number of scans by successively doubling the number 
+of steps between scans, i.e., performing the $i$th scan after $2^i$ steps, resulting in total cost at most $(2D+2,\log D)$; replacing
+the base of $2$ by an arbitrary constant $k$, we get $(k\times(D+1), \log_k D)$. This is within a constant of the optimal 
+On the other hand, moving a sufficiently large number $M$ of steps (known to satisfy $M\geq D$) before performing the second 
+scan yields $(M,2)$, which is optimal with respect to scan cost, but bad in terms of the cost for motion.
 
-%<Dominik> Quick draft to have something
-For simplicity we only consider moving left.  
-This analysis can be applied in both directions.
-Assume the left boundary is located $u$ units to the left of the leftmost particle.
- The optimal, yet unachievable, solution is to scan the workspace to detect the particle positions, next  move $u+1$ units to the left, then scan to detect that the leftmost particle has only moved $u$ units and thus has encountered the wall.
+Balacing the competitive factor for both parameters can be achieved as follows:
+perform the $i$th scan at position $i^i$. As it turns out, this yields a simultaneous competitive factor of 
+$O(\log D/\log\log D)$ for {\em both} parameters.
 
-If we have weighted cost, a movement in uniform steps relative to the scan costs results in a constant competitive ratio.
-If we want to optimize the bicriteria problem, the task becomes more complicated.
-A constant competitive ratio for the scan costs is obviously impossible.
-We define \emph{scan point} as a ??????.
-Setting the $i$-th scan point to $k^i$ results in a $O(k)$ competitive ratio for the movement and a $O(\log n)$ competitive ratio for the number of scans where $n$ is the position of the wall.
-It is possible to obtain a $O(\log n/ W(\log n))$ competitive ratio for the bicriteria problem by making the $i$-th scan at position $i^i$.
-In this case, the competitive ratio for movement as well as scans is $\theta(\log n/ W(\log n))$.
+\begin{theorem}
+\label{th:eyetoeye}
+The hyperexponential search sequence $i^i$ yields an simultaneous competitive factor of $O(\log D/\log\log D)$ for {\em both} parameters
+of the bicriteria search problem; this is best possible.
+\end{theorem}
 
-
+\begin{proof}
 Let us first consider the number of scans.
-We found the boundary between steps $j$ and $j+1$, i.e. $j^j \leq n < (j+1)^{j+1}$.
-This implies that $j\leq \log n/ W(\log n)$ (the inverse of $j^j$), hence $\log n/ W(\log n)+1$ scans have been made while the optimum are $2$ scans.
-The moved distance is $(j+1)^{j+1}$ while the optimum is $n\geq j^j$.
-Hence, the ratio 
+If the boundary is properly detected in step $j+1$, the particle must have encountered it between steps $j$ and $j+1$, i.e. $j^j \leq D < (j+1)^{j+1}$.
+Now we can employ the Lambert $W$ function, which is the inverse function of $f(x)=xe^x$; note that 
+$$\log x = W(\log x)*e^{W(\log x)},$$ 
+so
+	$$\log \log x = (\log W(\log x) + W(\log x)),$$
+and therefore
+	$$W(\log x) \in \Theta(\log \log x).$$
+
+This implies that $j\leq \log D/ W(\log D)$ (the inverse of $j^j$), hence $\Theta(\log D/ \log\log D)+1$ scans have been made, while the optimum are $2$ scans.
+
+The moved distance is $(j+1)^{j+1}$, while the optimum is $D\geq j^j$.
+Hence, we get the ratio 
 \begin{align}
-\frac{(j+1)^{(j+1)}}{j^j}=(j+1)\frac{(j+1)^j}{j^j}\label{eq:MoveDistanceRatio}
+\frac{(j+1)^{(j+1)}}{j^j}=(j+1)\frac{(j+1)^j}{j^j},\label{eq:MoveDistanceRatio}
 \end{align}
  where $0\leq \frac{(j+1)^j}{j^j}\leq \mathrm{e}$ for $j>0$.
  
-Since $j\leq \log n/ W(\log n)$, we obtain 
+Because $j\leq \log D/ W(\log D)$, we obtain 
 \begin{align}
 \frac{(j+1)^{(j+1)}}{j^j}\leq \mathrm{e}\frac{log n}{ W(\log n)}+\mathrm{e}\label{eq:MoveDistanceRatioInequality}
 \end{align}
- for $j>0$.
-%</Dominik>
+ for $j>0$. Clearly, this is again in within a factor of $\Theta(\log D/ \log\log D)+1$ of the optimum.
+\end{proof}
 
 %\subsubsection{German tank problem}
 %With multiple samples it is now possible to guess which direction is closer to the edge?  The population maximum is 
@@ -179,7 +197,7 @@ When the mapping is initiated, there will be 4$k$ equally valid destinations tha
 The algorithm arbitrarily choose a direction to move to. 
 Once frontiers are classified, there can be at most three more frontiers added per particle if it has landed on a free space or there will be a reduction of one frontier if the frontier cell contained an obstacle. 
 Since each $moveSeq$ guarantees classification of one frontier node into obstacle or free space. If there are $n$ free spaces, the maximum possible frontier cells count will be $3(n-2)+6$. 
-If for moveSeq generation left, up, right, down is the order of preference for direction of move in case of equidistant nodes, then as an example, for $k$ particles the maximum number of moves required to completely map the linear map environment will be 4($n$-$k$+1) if all the particles are arranged in adjacent cells on the right corner of the linear map. 
+If for moveSeq generation left,up,right,down is the order of preference for direction of move in case of equidistant nodes, then as an example, for $k$ particles the maximum number of moves required to completely map the linear map environment will be 4($n$-$k$+1) if all the particles are arranged in adjacent cells on the right corner of the linear map. 
 The simulation results in Section \ref{sec:simulation} show that both map complexity and distribution affect the number of moves taken to map the work space. In Alg.~\ref{alg:randommove} we used no information from the data except for checking completion. 
 In Alg.~\ref{alg:ElectParticle} we use the location and distance data from one particle to map the work space. 
 Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the mapping by utilizing all the data such as location of all particles and distance measurements from all frontiers. 
@@ -198,17 +216,13 @@ Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the map
 \end{algorithmic}
 \end{algorithm}
 
-\todo{Q7.Prove the greedy algorithm always works 
-Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
-}
+\todo{Q7.Prove the greedy algorithm always works }
 
 %\todo{insert plot of boundary nodes as a function of moves for 3 different values of no. of particles. n=100, n=500 and n=2000} 
 
+Not sure how to do this.  We have experiments.  There are so many options for arranging the freespace.  
 
-
-The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 
-1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary. 
- This is 4($n/k$) moves. %1+2(N/K) + 2(N/k -1)+1 = 
+The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ particles arranged along the left wall. 1 move left registers the left wall, repeating $n/k$ moves up and right to find the top boundary and the right boundary,  followed by $n/k -1$ moves down and left to find the bottom boundary, with one final move down to register the furthest left bottom boundary.  This is 4(n/k) moves. %1+2(N/K) + 2(N/k -1)+1 = 
 
 %Better if particles are in a square with side $\sqrt{N}$ and are in a vertical column spaced $\sqrt{N}/k-1$ apart.  moving left, followed by moving
 

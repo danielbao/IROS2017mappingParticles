@@ -131,7 +131,7 @@
 
 
 \pdfinfo{
-   /Author (Arun Mahadev, Dominik Krupke, S\'{a}ndor Fekete, and Aaron T. Becker)
+   /Author (Arun Mahadev, Dominik Krupke, S\'{a}ndor P.~Fekete, and Aaron T. Becker)
    /Title  (Mapping, Foraging, and Coverage with a Particle Swarm Controlled by Uniform Inputs)
    /CreationDate (D:20160129120000)
    /Subject (Simple Robots)
@@ -143,7 +143,7 @@
 \title{\LARGE \bf Mapping, Foraging, and Coverage\\ with a Particle Swarm Controlled by Uniform Inputs}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
-\author{Arun Mahadev, Dominik Krupke, S\'{a}ndor Fekete, and Aaron T. Becker% <-this % stops a space
+\author{Arun Mahadev, Dominik Krupke, S\'{a}ndor P.~Fekete, and Aaron T. Becker% <-this % stops a space
 \thanks{*This work was supported by the National Science Foundation under Grant No.\ \href{http://nsf.gov/awardsearch/showAward?AWD_ID=1553063}{ [IIS-1553063]} and \href{http://nsf.gov/awardsearch/showAward?AWD_ID=1619278}{[IIS-1619278]}.}% <-this % stops a space
 \thanks{{A.~Mahadev and A.~Becker are with the Department of Electrical and Computer Engineering,  University of Houston, Houston, TX 77204-4005 USA 
       \protect\url{ aviswanathanmahadev@uh.edu,atbecker@uh.edu }
@@ -162,15 +162,33 @@ S.~Fekete and D.~Krupke are with the Dept.~of Computer Science, TU Braunschweig,
 
 
 \begin{abstract}
-Consider a swarm of particles in a 1D or 2D grid that can be tracked and controlled by an external agent, but control inputs are applied uniformly so that each particle experiences the same applied forces. 
-This paper presents algorithms for (1) mapping: building a representation of the free and obstacle regions of the workspace;
-(2) foraging: ensuring at least one particle reaches each of a set of desired locations; 
-and (3) coverage: ensuring every free region on the map is visited by at least one particle.
+We propose a novel approach to mapping tissue and vascular systems without the use of contrast agents,
+based on moving and measuring magnetic particles.
+To this end, we consider a swarm of particles in a 1D or 2D grid that can be tracked and controlled by an external agent. 
+Control inputs are applied uniformly so that each particle experiences the same applied forces. 
+We present algorithms for three tasks: (1) {\em Mapping}, i.e., building a representation of the free and obstacle regions of the workspace;
+(2) {\em Foraging}, i.e., ensuring that at least one particle reaches each of a set of desired locations; 
+and (3) {\em Coverage}, i.e., ensuring that every free region on the map is visited by at least one particle.
+These tasks relate to a large body of previous work from robot navigation, both from theory and practice, 
+which is based on individual control.
 
-These algorithms extend to any number of particles, and show that additional particles reduce the time required for each task.  In the limit, as the particle count increases, the time reduces to four moves for mapping and zero moves for foraging and coverage. 
+We provide a spectrum of theoretical and practical new insights 
+that have particular relevance for fast MRI scans with magnetically controlled contrast media.
+In particular, we develop a fundamentally new approach 
+for searching for an object (a {\em membrane} in the context of tissue) at an unknown distance $D$, where the search is 
+subject to two different and independent cost parameters
+for {\em moving} and for {\em measuring}. We show that regardless of the relative cost of these two operations,
+there is a simple $O(\log D/\log\log D)$-competitive strategy, which is best possible.
+We extend this to to other settings. In addition, we provide alternative, practically useful strategies for higher-dimensional
+settings, as well as experimental results.
+These algorithms extend to any number of particles, and show that additional
+particles reduce the time required for each task.  ADD MORE ABOUT EXPERIMENTS?
+%In the limit, as the
+%particle count increases, the time reduces to four moves for mapping and zero
+%moves for foraging and coverage. 
 
 %Algorithms are tested in simulation, and validated with hardware experiments using magnetically steered paramagnetic particles.
-These methods may have particular relevance for fast MRI scans with magnetically controlled contrast media.
+%These methods may have particular relevance for fast MRI scans with magnetically controlled contrast media.
 
 % KEYWORDS:   uniform control, under-actuation, particle swarm
 \end{abstract}
@@ -201,8 +219,9 @@ These methods may have particular relevance for fast MRI scans with magnetically
 
 %\bibliographystyle{plainnat}
 %\bibliographystyle{SageH}
+\balance
 \bibliographystyle{IEEEtran}
-\bibliography{IEEEabrv,bib/uniformMapping}
+\bibliography{IEEEabrv,bib/uniformMapping,more}
 
 
 % Uncomment to add appendix:
