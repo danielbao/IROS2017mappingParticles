@@ -127,7 +127,6 @@ Because $j\leq \log D/ W(\log D)$, we obtain
 The shortest path for mapping with 1 particle is a version of depth-first search that halts when all boundaries have been reached.
 As long as the freespace is connected, DFS is the optimal solution to mapping.
 %\todo{Q2.Domink --- Prove that DFS is the optimal solution with 1 particle }
-%<Dominik> <- this tag is just to ease possible merges. Feel free to edit or delete.
 Even if the environment is known in advance, the problem is NP-hard as can be shown by a trivial reduction to Hamiltonian Paths in Grid Graphs \cite{itai1982hamilton}. %NP-hardness shown in Itai, Alon, Christos H. Papadimitriou, and Jayme Luiz Szwarcfiter. "Hamilton paths in grid graphs." SIAM Journal on Computing 11.4 (1982): 676-686.
 One can easily show that a simple depth-first-search guarantees an optimal ratio of $2$: the depth-first tree has $m-1$ edges and each edge is traversed at most twice. 
 Any path that covers $m$ fields needs to traverse least $m-1$ edges, the depth-first-search hence is at most twice as long as an optimal coverage path.
@@ -142,7 +141,6 @@ If the algorithm switches from the second form to the first, the first argument 
 Most previous work on grid graph exploration focused on exploration tours, i.e., after exploration one has to go back to the start position.
 If the environment is known in advance, this equals the traveling salesman problem and a PTAS is known~\cite{klein2008linear}. % Philip N. Klein.  A linear-time approximation scheme for TSP in undirected  planar  graphs  with  edge-weights.  SIAM  Journal  on  Computing , 37(6):1926–1952, 2008.
 If the environment is unknown, as it is in our case, the best achievable competitive ratio is $2$ in general grid graphs (achieved by depth first search) and $7/6$ for simple grid graphs ($4/3$ achieved by smartDFS \cite{icking2005exploring}). %Icking et al. http://link.springer.com/chapter/10.1007/11533719_53 http://www.geometrylab.de/applet-55
-%</Dominik>
 
 \subsubsection{2D mapping with n particles}
 
@@ -217,6 +215,27 @@ Finally in Alg.~\ref{alg:ClosestFrontier} we can push the performance of the map
 \end{algorithm}
 
 \todo{Q7.Prove the greedy algorithm always works }
+%<Dominik>
+%Comment: Just some quick text because this section is still missing. Feel free to remove or change.
+
+While the greedy strategy is the more reasonable approach in practice than DFS with a single particle, we are only able to show a trivial weaker bound on the corresponding moves.
+However, in some scenarios the greedy strategy can perform worse than DFS, e.g., in Fig.~\ref{fig:greed-worse-than-dfs}.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.2\textwidth]{./pictures/greedy-worse-than-dfs.eps}
+	\caption{In this example, the greedy strategy is $1.5\times$ worse than DFS with the bottom left particle.}
+	\label{fig:greed-worse-than-dfs}
+\end{figure}
+%TRIVIAL UPPER BOUND
+\begin{theorem}
+	The greedy strategy needs at most $0.5*n*(n+1)$ moves where $n$ is the number of fields. 
+\end{theorem}
+\begin{proof}
+	The distance between a particle and the closest boundary can be at most the number of all already visited fields.
+	Hence, the distance for visiting the $i$-th field is bounded by $i$.
+	The overall number of moves is bounded by $\sum_{i=1,\ldots,n} i = 0.5*n*(n+1)$.
+\end{proof}
+%</Dominik>
 
 %\todo{insert plot of boundary nodes as a function of moves for 3 different values of no. of particles. n=100, n=500 and n=2000} 
 
@@ -227,13 +246,36 @@ The minimum time is a rectangle $k$ units tall and $n/k$ wide, with the $n$ part
 %Better if particles are in a square with side $\sqrt{N}$ and are in a vertical column spaced $\sqrt{N}/k-1$ apart.  moving left, followed by moving
 
 \todo{Q3.What is the worst case?  }
+%<Dominik>
+%Comment: Just some quick text because this section is still missing. Feel free to remove or change.
+The greedy strategy can need $\Omega(m^2)$ moves while an optimal strategy only needs $O(m)$.
+An example can be seen in Fig.~\ref{fig:square-worse-than-opt}.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.2\textwidth]{./pictures/square-bad-case.eps}
+	\caption{The greedy strategy might selects to go right and then covers the square with a single particle which takes $\Omega(m^2)$ moves while the optimal strategy that visits the square in parallel with the $m$ particles, only needs $O(m)$ moves.}
+	\label{fig:square-worse-than-opt}
+\end{figure}
+%</Dominik>
 
-\todo{Q4.What is the complexity of the 2D problem?  }
+\todo{Q4.What is the complexity of the 2D problem? 
+NP-hard already for 1-particle, see previous section. The decision problem is NP-complete (i.e., it's not worse than NP-hard). %Dominik
+}
 
 \todo{Q5.Can we do better than the greedy algorithm for 2D coverage?  }
 
 \todo{Q6.What is the running time for the greedy algorithm?  }
-
+%<Dominik>
+%Comment: Just some quick text because this section is still missing. Feel free to remove or change.
+\begin{theorem}
+	The greedy strategy has a computational complexity in $O(n^2)$.
+\end{theorem}
+\begin{proof}
+	For an environment with $n$ fields, there are at most $n$ iterations.
+	Since the edges in the grid graph are not weighted and each field only has at most four neighbors, the shortest path from a particle to the boundary can be calculated in $O(n)$ time by a simple breadth first search.
+	NOTE: CURRENTLY USING DIJKSTRA WHICH HAS A HIGHER COMPLEXITY.
+\end{proof}
+%</Dominik>
 
 %\subsection{Mapping in 3D}
 
