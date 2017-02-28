@@ -40,7 +40,7 @@ Full coverage in 1D requires 60.7 moves on average, while reaching the boundarie
   The comparison plot Fig.~\ref{fig:MappingAlg3maps} between the mapping of  three 2D maps‚ \emph{complex}, \emph{empty rectangle} and \emph{linear} and a 1D map, shows that the complex map requires the most moves. 
   In Fig.~\ref{fig:MappingAlg3maps} there is an observable difference in moves between the linear and rectangular workspaces. 
 	One reason is because the perimeter of the linear map is much larger than the rectangular map. 
-	The number of cells to explore is $3m+2 = 15,002$ for the linear map, but only $m + 2(50+100) = 5300$ for the rectangular map. 
+	The number of cells to explore is $3m+2 = 15,002$ for the linear map, but only $m + 2(50+100) = 5,300$ for the rectangular map. 
 	Only when the number of particles is around 2/3 of the number of free spaces is there an overlap between the moves taken to map the rectangular space and the linear space. 
 
  
@@ -49,8 +49,8 @@ Full coverage in 1D requires 60.7 moves on average, while reaching the boundarie
 	\includegraphics[width=1.0\columnwidth]{MappingAlg3maps}
 \end{center}
 \caption{\label{fig:MappingAlg3maps}
-Comparison of mapping using the Closest Frontier algorithm on 2D maps of three types and  1D mapping on a linear map. 
-The complex map, empty rectangle map, and linear map (similar to a 1D map, but with obstacles to detect on top and bottom) each have 5000 free spaces.
+Comparison of mapping using the Closest Frontier algorithm on 2D maps of three types and 1D mapping on a linear map. 
+Each map has 5000 free spaces.
 }
 \end{figure}
 
@@ -68,15 +68,13 @@ Performing mapping on the complex 2D map with $n=1000$ particles. Random moves r
 
 
 %%%%%%%%%%%%%%%  fig:Alg_linlogplot
-  A comparison between the simulation results of the three algorithms is shown in Fig.~\ref{fig:Alg_linlogplot}. 
-  The mean completion time and standard deviation of the completion time decreased with increasing numbers of particles. 
-  The log plot shows that all three algorithms have an almost logarithmic relationship between $m$, the number of free spaces, and $k$, the number of particles.  
-  The maximum number of moves required using the closest frontier algorithm was for $k$=100 with an average of $\approx$1816 moves and standard deviation of 160 moves.
-This reduces to four moves with 0 standard deviation when $n$= 5000 (the total number of free spaces).
 
 Fig.~\ref{fig:Alg_linlogplot} compares the performance of Algs.~\ref{alg:randommove}, \ref{alg:ElectParticle}, and \ref{alg:ClosestFrontier} on the complex 2D map. 
+ For all algorithms  the mean completion time and standard deviation of the completion time decreased with increasing numbers of particles. 
 Random moves performs worst, with the largest number of required moves and the largest standard deviation of required moves.  Random moves is slightly better than elect particle  for large numbers of particles, but both algorithms are beat by closest frontier, which has the minimum number of required moves and the smallest standard deviation.
-
+  The maximum number of moves required using the closest frontier algorithm was for $k$=100 with an average of $\approx$1816 moves and standard deviation of 160 moves.
+This reduces to four moves with 0 standard deviation when $n$= 5000 (the total number of free spaces).
+%  The log plot shows that all three algorithms have an almost logarithmic relationship between $m$, the number of free spaces, and $k$, the number of particles.    % I don’t think we can claim this.  You'd have to fit a logrithmic fit to the data.  Try to do this with the linear-linear version of this data -- is it logarithmic?
 
 \begin{figure}
 \begin{center}
@@ -86,9 +84,8 @@ Random moves performs worst, with the largest number of required moves and the l
 Comparison of three algorithms - Random Moves (blue), Elect Particle (red) and Closest Frontier (green) for mapping the 2D Complex Map of 5000 free spaces.}
 \end{figure}
 
-
 %%%%%%%%%%%%%%%  fig:CoverageMappingForaging
-Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and foraging on the complex 2D map.  All are using Alg.~\ref{alg:ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells.  Similarly, foraging has a known map, but 10\% of the empty cells are labelled as frontier cells.  Foraging is a constant factor easier than coverage, which is a constant factor easier than mapping.
+Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and foraging on the complex 2D map.  All trials  used Alg.~\ref{alg:ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells.  Similarly, foraging has a known map, but 10\% of the empty cells are labelled as frontier cells.  Foraging is easier than coverage and coverage is easier than mapping.
 
 \begin{figure}
 \begin{center}
