@@ -5,7 +5,7 @@
 
 Coverage using one robot is a canonical robotics problem \cite{choset2001coverage}. It has been studied in-depth for many applications including lawn mowing, harvesting, floor cleaning, 3D printing, robotic painting and others. 
 
-Coverage means the robot has passed within $d/2$ of every location in the workspace where $d$ is the diameter of the robot's footprint. Coverage with a swarm of robots is a key ability for a range of applications because swarms have higher fault tolerance and reduce completion time. Correspondingly, it has been studied from a control-theoretic perspective in  both centralized and decentralized approaches. For examples of each, see  \cite{zheng2005multi}, and \cite{wagner1999distributed}.
+Coverage means the robot has passed within one robot radius of every location in the workspace. Coverage with a swarm of robots is a key ability for a range of applications because swarms have higher fault tolerance and reduce completion time. Correspondingly, it has been studied from a control-theoretic perspective in  both centralized and decentralized approaches. For examples of each, see  \cite{zheng2005multi}, and \cite{wagner1999distributed}.
 %where the coverage is performed in such a way that robots are not aware of each other's existence but always cover a cell that is a non-critical point which does not disconnect the graph. 
 
 Previous methods focus mostly on extending single robot coverage techniques to multi-robot systems. Solving coverage for synchronous multi-robots using on-line coverage techniques such as the boustrophedon technique of subdividing the 2D space into cells as in \cite{latimer2002towards} focuses on moving the robot teams in unison until they identify obstacles in their path. 
