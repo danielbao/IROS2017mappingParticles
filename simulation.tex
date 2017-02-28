@@ -34,31 +34,27 @@ Full coverage in 1D requires 60.7 moves on average, while reaching the boundarie
   The mapping simulation used a map with 5000 free spaces.
   Each simulation trial was repeated 100 times.
   The number of particles ranged from 100 to 5000 by increments of 100.
-  In each run the particles were placed randomly throughout the workspace. 
-  A comparison between the simulation results of the three algorithms is shown in Fig.~\ref{fig:Alg_linlogplot}. 
-  The mean completion time and standard deviation of the completion time decreased with increasing numbers of particles. 
-  The log plot shows that all three algorithms have an almost logarithmic relationship between $m$, the number of free spaces, and $k$, the number of particles.  
-  The maximum number of moves required using the closest frontier algorithm was for $k$=100 with an average moves $\approx$1816 and standard deviation of 160 moves.
-This reduces to four moves with 0 standard deviation when $n$= 5000 (the total number of free spaces).
+  In each run except Fig.~\ref{fig:RegionvsFloodvsUniform} the particles were placed randomly throughout the workspace. 
   
+ %%%%%%%%%%%%%%%  MappingAlg3maps
+  The comparison plot Fig.~\ref{fig:MappingAlg3maps} between the mapping of  three 2D mapsâ \emph{complex}, \emph{empty rectangle} and \emph{linear} and a 1D map, shows that the complex map requires the most moves. 
+  In Fig.~\ref{fig:MappingAlg3maps} there is an observable difference in moves between the linear and rectangular workspaces. 
+	One reason is because the perimeter of the linear map is much larger than the rectangular map. 
+	The number of cells to explore is $3m+2 = 15,002$ for the linear map, but only $m + 2(50+100) = 5300$ for the rectangular map. 
+	Only when the number of particles is around 2/3 of the number of free spaces is there an overlap between the moves taken to map the rectangular space and the linear space. 
 
+ 
 \begin{figure}
 \begin{center}
 	\includegraphics[width=1.0\columnwidth]{MappingAlg3maps}
 \end{center}
 \caption{\label{fig:MappingAlg3maps}
-Comparison of mapping 2D maps of three types using the Closest Frontier algorithm and the 1-D mapping of the linear map. The complex map, empty rectangle map, and linear map (similar to a 1D map, but with obstacles to detect on top and bottom) have 5000 free spaces.
+Comparison of mapping using the Closest Frontier algorithm on 2D maps of three types and  1D mapping on a linear map. 
+The complex map, empty rectangle map, and linear map (similar to a 1D map, but with obstacles to detect on top and bottom) each have 5000 free spaces.
 }
 \end{figure}
-  The comparison plot Fig.~\ref{fig:MappingAlg3maps} between the mapping of  three 2D mapsâ \emph{complex}, \emph{empty rectangle} and \emph{linear} and a 1D map, shows that the complex map requires the most moves. 
-  
-	In the Fig.~\ref{fig:MappingAlg3maps} there is an observable difference in moves between the linear and rectangular workspaces. 
-	One reason is because the number of useful moves is reduced in the linear case, where only left and right are useful moves. 
-	Up and down eliminate boundaries, but never discover free cells. 
-	%Nevertheless, it is important to identify the boundary. 
-	Whereas in the \emph{empty rectangle} case most of the moves are moves which add to the number of mapped spaces. 
-	Only when the number of particles is around 2/3 of the number of free spaces is there an overlap between the moves taken to map the rectangular space and the linear space. 
 
+ %%%%%%%%%%%%%%%  FrontierNodesVsk.pdf
 The difference between algorithms is highlighted in Fig.~\ref{fig:FrontierNodesVsk}, which shows the number of unexplored cells as a function of the number of moves commanded. All tests used $n=1000$ particles, but elect requires on average twice as many moves as closest frontier and random requires ten times as many moves as closest frontier.
 
 	
@@ -69,7 +65,18 @@ The difference between algorithms is highlighted in Fig.~\ref{fig:FrontierNodesV
 \caption{\label{fig:FrontierNodesVsk}
 Performing mapping on the complex 2D map with $n=1000$ particles. Random moves requires an average of 1683 moves. Elect particle requires 578 moves and Closest Frontier requires 215 moves}
 \end{figure}	
-	
+
+
+%%%%%%%%%%%%%%%  fig:Alg_linlogplot
+  A comparison between the simulation results of the three algorithms is shown in Fig.~\ref{fig:Alg_linlogplot}. 
+  The mean completion time and standard deviation of the completion time decreased with increasing numbers of particles. 
+  The log plot shows that all three algorithms have an almost logarithmic relationship between $m$, the number of free spaces, and $k$, the number of particles.  
+  The maximum number of moves required using the closest frontier algorithm was for $k$=100 with an average of $\approx$1816 moves and standard deviation of 160 moves.
+This reduces to four moves with 0 standard deviation when $n$= 5000 (the total number of free spaces).
+
+Fig.~\ref{fig:Alg_linlogplot} compares the performance of Algs.~\ref{alg:randommove}, \ref{alg:ElectParticle}, and \ref{alg:ClosestFrontier} on the complex 2D map. 
+Random moves performs worst, with the largest number of required moves and the largest standard deviation of required moves.  Random moves is slightly better than elect particle  for large numbers of particles, but both algorithms are beat by closest frontier, which has the minimum number of required moves and the smallest standard deviation.
+
 
 \begin{figure}
 \begin{center}
@@ -79,10 +86,9 @@ Performing mapping on the complex 2D map with $n=1000$ particles. Random moves r
 Comparison of three algorithms - Random Moves (blue), Elect Particle (red) and Closest Frontier (green) for mapping the 2D Complex Map of 5000 free spaces.}
 \end{figure}
 
-Fig.~\ref{fig:Alg_linlogplot} compares the performance of Algs.~\ref{alg:randommove}, \ref{alg:ElectParticle}, and \ref{alg:ClosestFrontier} on the complex 2D map. 
-Random moves performs worst, with the largest number of required moves and the largest standard deviation of required moves.  Random moves is slightly better than elect particle  for large numbers of particles, but both algorithms are beat by closest frontier, which has the minimum number of required moves and the smallest standard deviation.
 
-
+%%%%%%%%%%%%%%%  fig:CoverageMappingForaging
+Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and foraging on the complex 2D map.  All are using Alg.~\ref{alg:ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells.  Similarly, foraging has a known map, but 10\% of the empty cells are labelled as frontier cells.  Foraging is a constant factor easier than coverage, which is a constant factor easier than mapping.
 
 \begin{figure}
 \begin{center}
@@ -92,22 +98,24 @@ Random moves performs worst, with the largest number of required moves and the l
 Comparison of three related problems:  mapping, coverage, and foraging on the complex 2D map.}
 \end{figure}
 
-Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and foraging on the complex 2D map.  All are using Alg.~\ref{alg:ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells.  Similarly, foraging has a known map, but 10\% of the empty cells are labelled as frontier cells.  Foraging is a constant factor easier than coverage, which is a constant factor easier than mapping.
 
-\begin{figure}
-\begin{center}
-	\includegraphics[width=1.0\columnwidth]{RegionvsFloodvsUniform.pdf}
-\end{center}
-\caption{\label{fig:RegionvsFloodvsUniform}
-Comparison with different distributions:  flood-fill, region fill, and uniform distribution for mapping on the complex 2D map.}
-\end{figure}
-
+%%%%%%%%%%%%%%%  fig:RegionvsFloodvsUniform
 The final simulation test, shown in Fig.~\ref{fig:RegionvsFloodvsUniform}, compares the effect of different initial particle distributions in the complex 2D map.  
 Region fill places all $n$ particles at a minimum Manhattan distance from a randomly selected location on the map.
 Flood fill places one particle at a randomly selected location in the free space, and places the remaining particles according to a breadth-first expansion inside the free space.
 Uniform distribution places the particles uniformly randomly.  
 Region fill and flood fill have similar performance, while uniform distribution requires many fewer moves. 
 This is because dispersing particles using only global inputs is difficult, and a uniform distribution starts with the particles dispersed.
+
+\begin{figure}
+\begin{center}
+	\includegraphics[width=1.0\columnwidth]{RegionvsFloodvsUniform.pdf}
+\end{center}
+\caption{\label{fig:RegionvsFloodvsUniform}
+Comparison with different distributions:  flood-fill, region fill, and uniform distribution for mapping on the complex 2D map.  The results for flood-fill and region fill overlap. }
+\end{figure}
+
+
 
 
 

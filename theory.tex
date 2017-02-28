@@ -163,7 +163,7 @@ At the beginning there can be at most four frontier cells per particle to be exp
   \begin{algorithm}
 \caption{\sc RandomMoves($\mathbf{M},\mathbf{r}$)   \label{alg:randommove}}
 \begin{algorithmic}[1]
-\State$MoveType = \{l,u,r,d\}$ 
+\State$MoveType = \{l,r,u,d\}$ 
 \While{$|${\sc Frontier}$(\mathbf{M})| >0  $}
 %\While{ $|\mathbf{M}.Frontiercells| >0  $}
 \State$move \gets$ {\sc random}$(MoveType)$
@@ -200,7 +200,7 @@ Every time {\sc Move\&\!Update} is called, the nearest frontier is updated and $
 
 In each loop of Alg.~\ref{alg:ClosestFrontier}, all the moves in $moveSeq$ are implemented to explore the target frontier cell since it is the shortest possible route to a frontier cell. 
 At time 0, there will be at most 4$n$ equally valid destinations that can be visited since cells to the side of each particle not neighboring another particle are frontier cells. 
-BFS expands the search in a clockwise order, ${l,u,r,d}$, so the first move is $l$. 
+Our BFS expands the search in order, ${l,r,u,d}$, so the first move is $l$. 
 Each $moveSeq$ guarantees classification of one frontier cell into obstacle or free space.
 When a frontier cell is explored it is labelled either free or obstacle. There can be a net gain of at most two frontier cells per particle that encounters a free cell or no new frontier cells if the frontier cell contained an obstacle. 
 
@@ -266,7 +266,7 @@ An example can be seen in Fig.~\ref{fig:square-worse-than-opt}.
 \includegraphics[width=1.0\columnwidth]{greedy2}
 \end{center}
 \caption{\label{fig:square-worse-than-opt}
-If the move preference is counter clockwise, the greedy strategy Alg.~\ref{alg:ClosestFrontier} will go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal strategy, which visit the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
+The greedy strategy Alg.~\ref{alg:ClosestFrontier} could go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal strategy, which visits the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
 \end{figure}
 
 %\begin{figure}
