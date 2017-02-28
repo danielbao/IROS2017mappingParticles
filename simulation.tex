@@ -11,7 +11,7 @@
   The expected maximum gap is $\overline{g}$ is 273.9.
   
   
-  \subsection{2D mapping}
+  \subsection{2D mapping}  
   The mapping simulation was repeated 100 times for a given number of particles in a map with 5000 free spaces. 
   In each run the particles were placed randomly throughout the workspace. 
   For smaller ratios of particles/workspace the standard deviation of the completion time is large. 
@@ -27,10 +27,11 @@ This reduces to  four moves with 0 standard deviation when $n$= 5000 (the total 
   	The comparison plot between the mapping of the three mapsâ \emph{complex}, \emph{empty rectangle} and \emph{linear} shows that the complex map requires the most moves. 
 	In the Fig.~\ref{fig:MappingAlg3maps} there is an observable difference in moves between the linear and rectangular workspaces. 
 	One reason is because the number of useful moves is reduced in the linear case, where only left and right are useful moves. 
-	Up and down eliminate boundaries, but never discover free areas. 
+	Up and down eliminate boundaries, but never discover free cells. 
 	%Nevertheless, it is important to identify the boundary. 
-	Whereas inthe  \emph{empty rectangle} case most of the moves are moves which add to the number of mapped spaces. 
+	Whereas in the \emph{empty rectangle} case most of the moves are moves which add to the number of mapped spaces. 
 	Only when the number of particles is around 2/3 of the number of free spaces is there an overlap between the moves taken to map the rectangular space and the linear space. 
+	
 %	We should look at bounding the complexity. 
   	
 %  	\todo{insert observation values for the number of moves in three maps. Insert comparison between 3 algorithms random, elect and nearest node. Insert comparison between flood fill, uniform distribution and regional distribution.} 
@@ -108,7 +109,7 @@ Comparison with different distributions:  flood-fill, region fill, and uniform d
 	\includegraphics[width=1.0\columnwidth]{FrontierNodesVsk.pdf}
 \end{center}
 \caption{\label{fig:FrontierNodesVsk}
-Performing mapping on the complex 2D map with $n=500$ particles. Random moves requires an average of ?? moves. Elect particle requires ?? moves and Closest Frontier requires ?? moves}
+Performing mapping on the complex 2D map with $n=1000$ particles. Random moves requires an average of 4364 moves. Elect particle requires 933 moves and Closest Frontier requires 438 moves}
 \end{figure}
 
 
