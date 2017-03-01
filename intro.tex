@@ -17,7 +17,7 @@ Mapping a 2D environment with 500 blank spaces using $n=4$ (top) and $n=300$ par
 \end{figure}
 
 The particles considered in this paper move synchronously under the influence of a global command.
-Unless they get stopped by an obstacle or another stopped particle, they move by the same vector when the force is activated. 
+Unless they get stopped by an obstacle or another stopped particle. They move by the same vector when the force is activated. 
 Using MRI scans, it is possible to detect the location of particles, but not of the presence of tissue;
 the key idea is to deduce the presence of obstructing tissue by differences between the expected motion vectors and 
 the measured location of particles.
@@ -34,8 +34,8 @@ By commanding the particles to take one step in a particular direction, we can c
 The goal is to explore all  frontier cells, thereby discovering all connected free cells and the obstacles that surround them. 
 
 The paper is arranged as follows. 
-After a review of recent related work in Sec.~\ref{sec:RelatedWork}, we introduce the algorithms to perform mapping, coverage, and foraging in Sec.~\ref{sec:theory}.
- Sec.~\ref{sec:simulation} describes implementations of the algorithms in simulation and theoretical validation of efficiency. 
+After a review of recent related work in Sec.~\ref{sec:RelatedWork}, we introduce the algorithms to perform mapping, coverage, and foraging and also discuss the complexity in Sec.~\ref{sec:theory}.
+ In Sec.~\ref{sec:simulation} we discuss the performance of the algorithms on parameters which determine efficiency based on different environments, particle distribution and completion speed. We conclude this paper by summarizing the results and discussing
 % Sec.  \ref{sec:expResults} 
-  We discuss the performance of the algorithms on parameters which determine efficiency and also provide directions for further research in Sec.  \ref{sec:conclusion}.
+ directions for further research in Sec.  \ref{sec:conclusion}.
 
