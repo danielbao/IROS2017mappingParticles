@@ -11,4 +11,4 @@ set(gcf,'PaperUnits','inches')
 set(gcf,'papersize',[7,5])
 set(gcf,'paperposition',[0,0,7,5])
 
-print -dpdf 'MappingCoverageForaging.pdf'
+print -dpdf 'Mapcomp.pdf'
