@@ -1,0 +1,19 @@
+1)We present benchmarking algorithms for a novel approach towards mapping of tissue and vasculature based on moving and measuring magnetic particles that are commanded by a global uniform input such as an MRI. 
+2)The red particles which represent the micro particles need to visit frontier cells in blue in order to cover them or explore them. 
+We study the three related problems in 1D and 2D grid environments. 
+3+4)For mapping a linear 1D space we show that the number of moves can be bounded for single particle and n particle case.  
+We also examine mapping when scanning and moving have associated costs since an MRI can only do one at a time.
+5)For 2D, we provide 3 algorithms of increasing complexity:
+ First, Random moves. a probabilistically complete algorithm where each move is random. 
+5) Second, Elect particle. Path planning is made based on proximity of an elect particle in green, to it’s closest frontier which is green and blue blinking frontier cell.
+5+6) And finally closest frontier algorithm which exploits the proximity of a particle to a frontier cell.
+7) Here, planning is based on the closest frontier and particle pair. This algorithm gives the shortest path of the three.
+
+8) In the simulation analysis, we compare the performance of the algorithms for different number of particles, 
+9) Different distributions such as Region fill, Flood fill and Uniform fill, and finally 10)different maps. Such as: Empty rectangle, 
+11)H-tree map which has a large perimeter and 
+12)also a complex map closely resembling vascular structures. 
+Conditional:
+All simulations were performed on map size of 5000 free cells and repeated 100 times to obtain mean and standard deviations.   
+The results obtained in this work are of significant importance in understanding the constraints and challenges in particle manipulation and set a benchmark for future work.
+
