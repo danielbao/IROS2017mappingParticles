@@ -1,19 +1,19 @@
 1)We present benchmarking algorithms for a novel approach towards mapping of tissue and vasculature based on moving and measuring magnetic particles that are commanded by a global uniform input such as an MRI. 
-2)The red particles which represent the micro particles need to visit frontier cells in blue in order to cover them or explore them. 
-We study the three related challenges: mapping, coverage and foraging  in 1D and 2D grid environments with discrete inputs as seen here. 
-3+4)For mapping a linear 1D space we show that the maximum and minimum number of moves can be bounded for single particle case and for n particle case we derive the equation for number of moves.  
-We also examine mapping when scanning and moving have associated costs since an MRI can only do one at a time.
-5)For 2D, we provide 3 algorithms of increasing complexity:
+2)The red particles which represent the micro particles visit frontier cells in blue in order to cover them or explore them. All particles move a unit step in the same direction until stopped by the black obstacles in a given move.
+We study the three related challenges: mapping, coverage and foraging  in 1D and 2D grid environments. 
+3)For mapping a linear 1D space we show that the maximum and minimum number of moves can be bounded for single particle case.  
+4)For mapping with n particles, we derive the equation for number of moves as a function of maximum interparticle distance gbar.   
+5)We also examine mapping when scanning and moving have associated costs since in an MRI only  one can be done at a time.
+6)For 2D grid maps, we provide 3 algorithms of increasing complexity:
  First, Random moves. a probabilistically complete algorithm where each move is random. 
-6) Second, Elect particle. Path planning is made based on proximity of an elect particle in green, to it’s closest frontier cell which is blinking in green and blue. And 
-7)finally the closest frontier algorithm where the proximity of a particle to a frontier cell is exploited.
-7) Here, planning is based on the closest  frontier cell and particle pair. This algorithm gives the shortest path of the three. In the simulation analysis, we compare
-
-8) The performance of the algorithms for different number of particles, 
-9) Effects of Different distributions such as Region fill, Flood fill and Uniform fill, and finally 10)different maps. Such as: Empty rectangle, 
-11)H-tree map which has a large perimeter and 
-12)also a complex map closely resembling vascular structures. 
-Conditional:
-All simulations were performed on map size of 5000 free cells and repeated 100 times to obtain mean and standard deviations.   
-The results obtained in this work are of significant importance in understanding the constraints and challenges in particle manipulation and set a benchmark for future work.
+7) Second, Elect particle. Path planning is made based on proximity of an elect particle in green, to it’s closest frontier cell which is blinking in green and blue. And 
+8)finally the closest frontier algorithm where the proximity of a particle to a frontier cell is exploited. Here, planning is based on the closest  frontier cell and particle pair. This algorithm gives the shortest path of the three. 
+To give a holistic idea about mapping with global inputs
+9) we also discuss the optimal and worst case scenarios for our algorithms.
+In the simulation analysis, we compare
+10) The performance of the algorithms for different number of particles, 
+11) Effects of Different distributions such as Region fill, Flood fill and Uniform fill, and finally 
+12)different maps. Such as: Empty rectangle, 
+13)H-tree map which has a large perimeter and 
+14)also a complex map closely resembling vascular structures. 
 
