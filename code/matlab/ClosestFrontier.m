@@ -24,23 +24,23 @@ if nargin<1
     itr=1;
 end
 G.fig = figure(1);
-G.mapnum =6000;%22;
+set(gcf,'Renderer','OpenGL');
+G.mapnum =24;%22;
 G.movecount = 0;
+G.movetyp = [-1,0;0,1;1,0;0,-1];
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
+G.videoflag=0;
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
-t=datetime('now');
-DateString = datestr(t);
-MOVIE_NAME =['Closest Frontier_map',num2str(G.mapnum),'_',num2str(k),'robots',DateString]; %Change video name here
-clf
+MOVIE_NAME =['Closest Frontier_map',num2str(G.mapnum),'_',num2str(k),'robots','_video8']; %Change video name here
 writerObj = VideoWriter(MOVIE_NAME,'MPEG-4');%http://www.mathworks.com/help/matlab/ref/videowriterclass.html
 set(writerObj,'Quality',100);
 writerObj.FrameRate=30;
 open(writerObj);
     function makemymovie()% Call after each frame is generated
-        if G.drawflag==1
+        if G.videoflag==1
             figure(G.fig)
             F = getframe(G.fig);
             writeVideo(writerObj,F.cdata);
@@ -242,6 +242,8 @@ CF() % Closest Frontier mapping algorithm
         free = find(blk==0);
         robvec = ones(size(free));
         [ri,ci] = find(blk==0);
+        G.ri=ri;
+        G.ci=ci;
         Moves = repmat( (1:numel(free))',1,4);
         world = -blk;
         world(free) = 1:numel(free);
