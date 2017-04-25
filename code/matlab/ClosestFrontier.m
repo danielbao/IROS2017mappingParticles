@@ -19,18 +19,18 @@ function [movecount,k,nodecount] = ClosestFrontier(k,itr)
 %     atbecker@uh.edu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global G;
-if nargin<1
-    k = 200;%num particles
+if nargin<1%if no inputs are provided
+    k = 200;%default num particles
     itr=1;
 end
 G.fig = figure(1);
-set(gcf,'Renderer','OpenGL');
-G.mapnum =24;%22;
-G.movecount = 0;
-G.movetyp = [-1,0;0,1;1,0;0,-1];
+set(gcf,'Renderer','OpenGL');%setting graph renderer to use OpenGL
+G.mapnum =24;%22; identifier for map
+G.movecount = 0;%number of moves made
+G.movetyp = [-1,0;0,1;1,0;0,-1];%array for making moves; begins up, right, down, left down each row
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=0;
+G.videoflag=0;%default 0, set to 1 if video is to be made
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -46,11 +46,11 @@ open(writerObj);
             writeVideo(writerObj,F.cdata);
         end
     end
-%% Setup map, matrices and initite mapping
-[G.obstacle_pos,G.free,G.robvec,G.Moves] = SetupWorld(G.mapnum);
+%% Setup map, matrices and initiate mapping
+[G.obstacle_pos,G.free,G.robvec,G.Moves] = SetupWorld(G.mapnum);%setup global array for master obstacle positions etc.
 set(G.fig ,'KeyPressFcn',@keyhandler,'Name','Massive Control','color','w')
-G.maxX = size(G.obstacle_pos,2);
-G.maxY = size(G.obstacle_pos,1);
+G.maxX = size(G.obstacle_pos,2);%x-dimension of obstacles
+G.maxY = size(G.obstacle_pos,1);%y-dimension of obstacles
 G.colormap = [ 1,1,1; %Empty = white  0
     0.5,0.5,0.5; %undiscovered= grey 1
     1,1,1; %robot= white square with red circle 2
@@ -58,7 +58,7 @@ G.colormap = [ 1,1,1; %Empty = white  0
     0,0,1;%boundary cells= blue      4
     ];
 
-randRobots=randperm(numel(G.robvec)); %randRobots: 1:num_empty_spaces, randomly arranged
+randRobots=randperm(numel(G.robvec)); %randRobots: 1:num_empty_spaces, randomly arranged; randomize robots in robot positions
 G.robvec(randRobots(k+1:end))=0; % locations of the k robots
 
 RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to build path in this map
@@ -66,7 +66,7 @@ map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the ex
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
 updateMap() %Update the map with the information from all the seperate maps
-set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');
+set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%create graph without all of the axes
 axis equal
 axis tight
 updateTitle() %Update the values displayed in the title
@@ -84,11 +84,11 @@ CF() % Closest Frontier mapping algorithm
             frontier_vec=G.boundvec; %current locations of frontiers
             roboloc=G.roboloc; %current locations of particles
             moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); %the shortest path to a frontier cell selected by expanding from particles
-            steps = min(inf,numel(moveSeq));
-            for mvIn =1:steps
+            steps = min(inf,numel(moveSeq));%get the minimum number of steps from the Dijkstra's algo
+            for mvIn =1:steps%move to the frontier
                 moveto(moveSeq(mvIn)); %Implement moves on all particles
-                nodecount(iter)=nnz(frontier_exp);
-                iter=iter+1;
+                nodecount(iter)=nnz(frontier_exp);%update the resultant frontier cell vector
+                iter=iter+1;%increment the actual number of steps
                 makemymovie()
             end %end DFS
         end
@@ -99,15 +99,15 @@ CF() % Closest Frontier mapping algorithm
 %% nodes updates the frontier_exp which is the matrix of frontiers explored
     function nodes(robIndex)
         %For each robot, check if the cell in direction mv is unknown
-        for mv_type=1:4
-            for c = 1:numel(robIndex);
-                i2 = G.ri(robIndex(c))+G.movetyp(mv_type,2);
-                j2 = G.ci(robIndex(c))+G.movetyp(mv_type,1);
-                % if the cell has neer been visited and isn't an obstacle
+        for mv_type=1:4%check in 4 directions
+            for c = 1:numel(robIndex);%check for every robot
+                i2 = G.ri(robIndex(c))+G.movetyp(mv_type,2);%change x-indice
+                j2 = G.ci(robIndex(c))+G.movetyp(mv_type,1);%change y-indice
+                % if the cell has never been visited and isn't an obstacle
                 if RobotVisits(i2,j2) == 0 && mapped_obstacles(i2,j2) == 0
-                    frontier_exp(i2,j2)=1;
+                    frontier_exp(i2,j2)=1;%It's a frontier!
                 else
-                    frontier_exp(i2,j2)=0;
+                    frontier_exp(i2,j2)=0;%It isn't a frontier!
                 end
             end
         end
@@ -115,25 +115,25 @@ CF() % Closest Frontier mapping algorithm
 
 
 %% Apply move called by moveto to all the robots
-    function rvec2 = applyMove(mv, rvecIn)
+    function rvec2 = applyMove(mv, rvecIn)%mv=move selected; rvecIn=robots/particles locations
         rvec2 = zeros(size(rvecIn));
-        if mv==1 || mv==4 %colission check for left and down
-            for ni = 1:numel(rvecIn)
-                if rvecIn(G.Moves(ni,mv)) ~= 1
-                    rvec2(G.Moves(ni,mv)) = rvecIn(ni);
-                    rvecIn(ni)=0;
+        if mv==1 || mv==4 %collision check for left and down
+            for ni = 1:numel(rvecIn)%G.Moves(ni,mv) returns 1 if there is a robot after the movement mv
+                if rvecIn(G.Moves(ni,mv)) ~= 1%If a robot isn't there at left or down
+                    rvec2(G.Moves(ni,mv)) = rvecIn(ni);%We move to the new address and return it
+                    rvecIn(ni)=0;%clear rvecIn for robot ni
                 else
-                    rvec2(ni)=rvecIn(ni);
+                    rvec2(ni)=rvecIn(ni);%return old address for robot
                 end
-                rvecIn(ni)=rvec2(ni);
+                rvecIn(ni)=rvec2(ni);%robot stays there
             end
         else %collision check for up and right
-            for ni=numel(rvecIn):-1:1
-                if rvecIn(G.Moves(ni,mv)) == 0
+            for ni=numel(rvecIn):-1:1%for the rest of the robots
+                if rvecIn(G.Moves(ni,mv)) == 0%equivalent to ~=0, if there isn't a robot to the right or above
                     rvec2(G.Moves(ni,mv)) = rvecIn(ni);
-                    rvecIn(ni)=0;
+                    rvecIn(ni)=0;%clear input for robot ni
                 else
-                    rvec2(ni)=rvecIn(ni);
+                    rvec2(ni)=rvecIn(ni);%
                 end
             end
         end
@@ -239,7 +239,7 @@ CF() % Closest Frontier mapping algorithm
         % robvec is a binary vector where the ith element is true if there
         % is a robot at free(i).
         blk = blockMaps(mapnum); % function returns the binary map specified by mapnum
-        free = find(blk==0);
+        free = find(blk==0); 
         robvec = ones(size(free));
         [ri,ci] = find(blk==0);
         G.ri=ri;
