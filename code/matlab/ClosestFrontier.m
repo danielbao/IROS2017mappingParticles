@@ -25,7 +25,7 @@ if nargin<1%if no inputs are provided
 end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%setting graph renderer to use OpenGL
-G.mapnum =24;%22; identifier for map
+G.mapnum =24;%22; identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%array for making moves; begins up, right, down, left down each row
 movecount=G.movecount;
@@ -149,8 +149,8 @@ CF() % Closest Frontier mapping algorithm
     end
 %% moveto(key) calls apply move and updates the map
     function moveto(key)
-        G.movecount = G.movecount+1;
-        mv=0;
+        G.movecount = G.movecount+1;%increment movecount everytime a move is applied
+        mv=0;%reset move everytime
         if strcmp(key,'leftarrow') || strcmp(key,'l')|| strcmp(key,'1')  %-x
             mv = 1;
         elseif strcmp(key,'rightarrow')|| strcmp(key,'r')|| strcmp(key,'2')  %+x
@@ -160,7 +160,7 @@ CF() % Closest Frontier mapping algorithm
         elseif strcmp(key,'downarrow')|| strcmp(key,'d') || strcmp(key,'4') %-y
             mv = 4;
         end
-        if mv>0
+        if mv>0%do the move
             map_expected=G.im2;
             
             % map_expected has 1 where robot is expected to be
@@ -173,12 +173,13 @@ CF() % Closest Frontier mapping algorithm
             else
                 map_expected = circshift(map_expected,[-1 0]);
             end
-            G.movecount = G.movecount+1;
-            G.robvec = applyMove(mv, G.robvec);
+            %G.movecount = G.movecount+1;commented out because it is a
+            %double movecount
+            G.robvec = applyMove(mv, G.robvec);%move robots
             updateMap()
             updateTitle()
             if G.drawflag==1
-                drawcirc()
+                drawcirc()%draw each robot again
             end
             drawnow
             makemymovie()
@@ -186,13 +187,13 @@ CF() % Closest Frontier mapping algorithm
     end
 %% Drawing scatter circles in the location of particles
     function drawcirc()
-        h=scatter(G.robscaty,G.robscatx,'r','filled');
-        currentunits = get(gca,'Units');
-        set(gca, 'Units', 'Points');
+        h=scatter(G.robscaty,G.robscatx,'r','filled');%create a new variable with the scatterplot
+        currentunits = get(gca,'Units');%use current Units
+        set(gca, 'Units', 'Points');%graph the current Units and Points
         axpos = get(gca,'Position');
         set(gca, 'Units', currentunits);
         markerWidth = .8/diff(xlim)*axpos(3); % Calculate Marker width in points
-        set(h,'SizeData', markerWidth^2)
+        set(h,'SizeData', markerWidth^2)%graph with data and squared width
         drawnow
     end
 %% Updating the map
@@ -201,12 +202,12 @@ CF() % Closest Frontier mapping algorithm
         current_map(G.free) = 2*G.robvec; %2 = particles on map
         
         G.im2=zeros(size(current_map)); %Set particles matrix to zero. This matrix will have 1 where particles are and zero otherwise
-        G.im2(G.free(G.robvec>0))=1;
+        G.im2(G.free(G.robvec>0))=1;%Set particles matrix to 1 where the robots are
         RobotVisits=G.im2+RobotVisits; %RoboVisits stores cells already visited by particles
-        robIndex = find(G.robvec);
+        robIndex = find(G.robvec);%get positions of robots again
         nodes(robIndex);
-        current_map(RobotVisits==0)=1; % 1= undiscovered
-        frontier_exp(current_map==2)=0;
+        current_map(RobotVisits==0)=1; % 1= undiscovered, set it to undiscovered if there no robot has visited there
+        frontier_exp(current_map==2)=0;%current_map is 2 when it has been visited; therefore it isn't a frontier
         map_expected(current_map~=1)=0;
         mapped_obstacles = mapped_obstacles | map_expected;
         frontier_exp(mapped_obstacles)=0;
