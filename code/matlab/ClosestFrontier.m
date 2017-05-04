@@ -47,15 +47,15 @@ open(writerObj);
         end
     end
 %% Setup map, matrices and initiate mapping
-[G.obstacle_pos,G.free,G.robvec,G.Moves] = SetupWorld(G.mapnum);%setup global array for master obstacle positions etc.
+[G.obstacle_pos,G.free,G.robvec,G.Moves] = SetupWorld(G.mapnum);%setup global arrays for master obstacle positions etc.
 set(G.fig ,'KeyPressFcn',@keyhandler,'Name','Massive Control','color','w')
-G.maxX = size(G.obstacle_pos,2);%x-dimension of obstacles
-G.maxY = size(G.obstacle_pos,1);%y-dimension of obstacles
+G.maxX = size(G.obstacle_pos,2);%x-dimension of obstacles in number of columns
+G.maxY = size(G.obstacle_pos,1);%y-dimension of obstacles in number of rows
 G.colormap = [ 1,1,1; %Empty = white  0
     0.5,0.5,0.5; %undiscovered= grey 1
     1,1,1; %robot= white square with red circle 2
     0,0,0;%obstacle= black           3
-    0,0,1;%boundary cells= blue      4
+    0,0,1;%boundary cells/frontier= blue      4
     ];
 
 randRobots=randperm(numel(G.robvec)); %randRobots: 1:num_empty_spaces, randomly arranged; randomize robots in robot positions
@@ -80,15 +80,15 @@ CF() % Closest Frontier mapping algorithm
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
     function CF()
         iter=1;
-        while(nnz(frontier_exp)>0)
-            frontier_vec=G.boundvec; %current locations of frontiers
-            roboloc=G.roboloc; %current locations of particles
+        while(nnz(frontier_exp)>0)%While there are still unknowns in our frontier map, DFS beigin
+            frontier_vec=G.boundvec; %refresh local variable to global current locations of frontiers
+            roboloc=G.roboloc; %refresh local locations to global current locations of particles
             moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); %the shortest path to a frontier cell selected by expanding from particles
             steps = min(inf,numel(moveSeq));%get the minimum number of steps from the Dijkstra's algo
             for mvIn =1:steps%move to the frontier
                 moveto(moveSeq(mvIn)); %Implement moves on all particles
-                nodecount(iter)=nnz(frontier_exp);%update the resultant frontier cell vector
-                iter=iter+1;%increment the actual number of steps
+                nodecount(iter)=nnz(frontier_exp);%update the nodes visited in each step
+                iter=iter+1;%increment the iterations taken, not moveCount, used for efficiency
                 makemymovie()
             end %end DFS
         end
@@ -165,13 +165,13 @@ CF() % Closest Frontier mapping algorithm
             
             % map_expected has 1 where robot is expected to be
             if mv==1
-                map_expected = circshift(map_expected,[0 -1]);
+                map_expected = circshift(map_expected,[0 -1]);%shift map left by 1
             elseif mv==2
-                map_expected = circshift(map_expected,[0 1]);
+                map_expected = circshift(map_expected,[0 1]);%shift map right by 1
             elseif mv==3
-                map_expected = circshift(map_expected,[1 0]);
+                map_expected = circshift(map_expected,[1 0]);%shift map down by 1
             else
-                map_expected = circshift(map_expected,[-1 0]);
+                map_expected = circshift(map_expected,[-1 0]);%shift map up by 1
             end
             %G.movecount = G.movecount+1;commented out because it is a
             %double movecount
@@ -208,17 +208,17 @@ CF() % Closest Frontier mapping algorithm
         nodes(robIndex);
         current_map(RobotVisits==0)=1; % 1= undiscovered, set it to undiscovered if there no robot has visited there
         frontier_exp(current_map==2)=0;%current_map is 2 when it has been visited; therefore it isn't a frontier
-        map_expected(current_map~=1)=0;
-        mapped_obstacles = mapped_obstacles | map_expected;
-        frontier_exp(mapped_obstacles)=0;
+        map_expected(current_map~=1)=0;%if current map is not visited, then there must be nothing expected there
+        mapped_obstacles = mapped_obstacles | map_expected;%OR the expected and mapped obstacles to update obstacles
+        frontier_exp(mapped_obstacles)=0;%all of our obstacles are refreshed to not be frontiers
         current_map(frontier_exp==1)=4; % 4 = frontier cells
         current_map(mapped_obstacles==1)=3; % 3 = obstacles
-        G.update_map=zeros(size(current_map));
-        G.update_map(current_map==3)=1;
-        G.update_map(current_map==1)=1;
-        G.boundvec=find(current_map== 4);
-        G.roboloc =find(current_map== 2);
-        [G.robscatx,G.robscaty]=find(current_map== 2);
+        G.update_map=zeros(size(current_map));%reset update_map
+        G.update_map(current_map==3)=1;%reset our unknowns and obstacles to be undiscovered
+        G.update_map(current_map==1)=1;%reset undiscovered to be undiscovered
+        G.boundvec=find(current_map== 4);%set boundaries to be frontiers
+        G.roboloc=find(current_map== 2);%set robot locations to where they have visited
+        [G.robscatx,G.robscaty]=find(current_map== 2);%store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
         if G.drawflag==1
             G.axis=imagesc(current_map); %show map that updates as robots explore
@@ -226,7 +226,7 @@ CF() % Closest Frontier mapping algorithm
     end
 %% Update title when called
     function updateTitle()
-        if nnz( frontier_exp)==1
+        if nnz(frontier_exp)==1%Grammatical condition if there is only 1 frontier cell
             FC=' Frontier Cell';
         else
             FC=' Frontier Cells';
@@ -235,33 +235,34 @@ CF() % Closest Frontier mapping algorithm
     end
 %% setup map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)
-        %  blk is the position of obstacles
+        % blk is the position of obstacles
         % free is the index of the free spaces in blk
         % robvec is a binary vector where the ith element is true if there
         % is a robot at free(i).
         blk = blockMaps(mapnum); % function returns the binary map specified by mapnum
-        free = find(blk==0); 
-        robvec = ones(size(free));
+        free = find(blk==0); % free spaces are where the obstacles are 0
+        robvec = ones(size(free)); % put a robot in every free space
         [ri,ci] = find(blk==0);
         G.ri=ri;
         G.ci=ci;
-        Moves = repmat( (1:numel(free))',1,4);
+        Moves = repmat( (1:numel(free))',1,4); %repeat free four times across
         world = -blk;
-        world(free) = 1:numel(free);
-        for i = 1:numel(free)
+        world(free) = 1:numel(free);%assign a vector to world at location of free to
+        %represent each possible move at free space
+        for i = 1:numel(free)%iterate through free
             r = ri(i);
             c = ci(i);
-            if blk(r,c-1) == 0
-                Moves(i,1) = world(r,c-1);
+            if blk(r,c-1) == 0%using beginning LR UD conventions, if you can move left
+                Moves(i,1) = world(r,c-1);%store possible left move in Moves from world's left cell
             end
-            if blk(r,c+1) == 0
-                Moves(i,2) = world(r,c+1);
+            if blk(r,c+1) == 0%move right
+                Moves(i,2) = world(r,c+1);%store possible right move in Moves from world's right cell
             end
-            if blk(r+1,c) == 0
-                Moves(i,3) = world(r+1,c);
+            if blk(r+1,c) == 0%move down
+                Moves(i,3) = world(r+1,c);%store possible down move in Moves from world's down cell
             end
-            if blk(r-1,c) == 0
-                Moves(i,4) = world(r-1,c);
+            if blk(r-1,c) == 0%move up
+                Moves(i,4) = world(r-1,c);%store posible up move in Moves from world's down cell
             end
         end
         
