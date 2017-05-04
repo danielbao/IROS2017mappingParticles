@@ -88,7 +88,7 @@ CF() % Closest Frontier mapping algorithm
             for mvIn =1:steps%move to the frontier
                 moveto(moveSeq(mvIn)); %Implement moves on all particles
                 nodecount(iter)=nnz(frontier_exp);%update the nodes visited in each step
-                iter=iter+1;%increment the iterations taken, not moveCount, used for efficiency
+                iter=iter+1;%increment the iterations taken
                 makemymovie()
             end %end DFS
         end
@@ -100,7 +100,7 @@ CF() % Closest Frontier mapping algorithm
     function nodes(robIndex)
         %For each robot, check if the cell in direction mv is unknown
         for mv_type=1:4%check in 4 directions
-            for c = 1:numel(robIndex);%check for every robot
+            for c = 1:numel(robIndex)%check for every robot
                 i2 = G.ri(robIndex(c))+G.movetyp(mv_type,2);%change x-indice
                 j2 = G.ci(robIndex(c))+G.movetyp(mv_type,1);%change y-indice
                 % if the cell has never been visited and isn't an obstacle
