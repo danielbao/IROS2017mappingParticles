@@ -14,6 +14,20 @@ function [movecount,k,nodecount] = ClosestFrontier(k,itr)
 % distance from all particles to the frontiers.
 % There are 21 maps to choose from: 1 through 26. Map specifications can be
 % found in BlockMaps and selected in G.mapnum
+% Functions to be called:
+%
+%
+% Matrices used:
+% G.obstacle_pos=Given obstacle positions from the map selected
+% G.free=Free positions for particles in the map
+% G.robvec=Known locations of the robots
+% G.Moves
+% RobotVisits
+% map_expected
+% mapped_obstacles=Mapped obstacle locations
+% frontier_exp=Frontier locations explored
+%
+%
 %
 %  Developers:
 %  Aaron T. Becker
@@ -34,10 +48,10 @@ set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 G.mapnum =24;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
-                                %Each row is up, right, left, down
+%each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=1;% Default 0, set to 1 if video is to be made
+G.videoflag=0;% Default 0, set to 1 if video is to be made
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -85,9 +99,6 @@ end
 makemymovie()
 %End of initialization
 CF() % Closest Frontier mapping algorithm
-for m=1:60
-    makemymovie();
-end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
     function CF()
         iter=1;
@@ -237,7 +248,7 @@ end
             G.axis=imagesc(current_map); %Show map that updates as robots explore
         end
     end
-%% updateTitle updates title when called
+%% updateTitle update title when called
     function updateTitle()
         if nnz(frontier_exp)==1%Grammatical condition if there is only 1 frontier cell
             FC=' frontier cell';
@@ -246,37 +257,36 @@ end
         end
         title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', iteration: ', num2str(itr)])
     end
-%% SetupWorld setups map
+%% setup map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)
-        %blk is the position of obstacles
-        %free is the index of the free spaces in blk
-        %robvec is a binary vector where the ith element is true if there
-        %is a robot at free(i).
-        blk = blockMaps(mapnum); %Function returns the binary map specified by mapnum
-        free = find(blk==0); %Free spaces are where the obstacles are 0
-        robvec = ones(size(free)); %Put a robot in every free space
+        % blk is the position of obstacles
+        % free is the index of the free spaces in blk
+        % robvec is a binary vector where the ith element is true if there
+        % is a robot at free(i).
+        blk = blockMaps(mapnum); % function returns the binary map specified by mapnum
+        free = find(blk==0); % free spaces are where the obstacles are 0
+        robvec = ones(size(free)); % put a robot in every free space
         [ri,ci] = find(blk==0);
         G.ri=ri;
         G.ci=ci;
-        Moves = repmat( (1:numel(free))',1,4); %Repeat free four times across
-                                               %Represents 4 
+        Moves = repmat( (1:numel(free))',1,4); %repeat free four times across
         world = -blk;
-        world(free) = 1:numel(free);%Assign a vector to world at location of free to
-        %Represent each possible move at free space
-        for i = 1:numel(free)%Iterate through free
+        world(free) = 1:numel(free);%assign a vector to world at location of free to
+        %represent each possible move at free space
+        for i = 1:numel(free)%iterate through free
             r = ri(i);
             c = ci(i);
-            if blk(r,c-1) == 0%Using beginning LR UD conventions, if you can move left
-                Moves(i,1) = world(r,c-1);%Store possible left move in Moves from world's left cell
+            if blk(r,c-1) == 0%using beginning LR UD conventions, if you can move left
+                Moves(i,1) = world(r,c-1);%store possible left move in Moves from world's left cell
             end
-            if blk(r,c+1) == 0%Move right
-                Moves(i,2) = world(r,c+1);%Store possible right move in Moves from world's right cell
+            if blk(r,c+1) == 0%move right
+                Moves(i,2) = world(r,c+1);%store possible right move in Moves from world's right cell
             end
-            if blk(r+1,c) == 0%Move down
-                Moves(i,3) = world(r+1,c);%Store possible down move in Moves from world's down cell
+            if blk(r+1,c) == 0%move down
+                Moves(i,3) = world(r+1,c);%store possible down move in Moves from world's down cell
             end
-            if blk(r-1,c) == 0%Move up
-                Moves(i,4) = world(r-1,c);%Store posible up move in Moves from world's down cell
+            if blk(r-1,c) == 0%move up
+                Moves(i,4) = world(r-1,c);%store posible up move in Moves from world's down cell
             end
         end
         
