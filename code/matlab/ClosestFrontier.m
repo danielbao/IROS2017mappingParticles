@@ -36,7 +36,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =24;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =25;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -87,10 +87,12 @@ hold on
 if G.drawflag==1
     drawcirc()
 end
-makemymovie()
+for m=1:60%Beginning frames drawn
+    makemymovie();
+end
 %End of initialization
-CF() % Closest Frontier mapping algorithm
-for m=1:60
+CF() %Closest Frontier mapping call
+for m=1:60 %Ending frames result drawn
     makemymovie();
 end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left

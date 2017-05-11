@@ -258,7 +258,7 @@ elseif mapnum==23%rectangular map with 5000 free spaces
 elseif mapnum == 24
     blk = imread('leafBWsmall.png');%Completely connected and bounded
                                     %image of a small part of a leaf
-    blk= imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -268,7 +268,7 @@ elseif mapnum == 24
 elseif mapnum == 25
     blk = imread('leafBWmedium.png');%Completely connected and bounded
                                     %image of a medium part of a leaf
-    blk= imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -278,7 +278,7 @@ elseif mapnum == 25
 elseif mapnum == 26
     blk = imread('leafBWbig.png');%Completely connected and bounded
                                     %image of a whole leaf
-    blk= imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -288,7 +288,7 @@ elseif mapnum == 26
 elseif mapnum==27
     blk = imread('leafBWar5000edit.png');%Completely connected and bounded
                                          %leaf with 5000 free spaces
-    blk= imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -297,7 +297,7 @@ elseif mapnum==27
     blk=map_inputz;
 elseif mapnum==28
     blk=imread('leafBWar5000.png');%Different leaf with 5000 spaces
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -306,7 +306,7 @@ elseif mapnum==28
     blk=map_inputz;
 elseif mapnum==29
     blk=imread('leafBWar500.png');%Different leaf with 500 spaces
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -315,7 +315,7 @@ elseif mapnum==29
     blk=map_inputz;    
 elseif mapnum==30
     blk=imread('leafBW.png');%Different leaf
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -324,7 +324,7 @@ elseif mapnum==30
     blk=map_inputz;
 elseif mapnum==31
     blk=imread('HTree_3_1441.png');%3 level H tree with 1441 spaces
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeros(m2,n2);
@@ -333,7 +333,7 @@ elseif mapnum==31
     blk=map_inputz;    
 elseif mapnum==32
     blk=imread('HTree_4_5000.png');%4 level H tree with 5000 free spaces
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeroes(m2,n2);
@@ -342,7 +342,7 @@ elseif mapnum==32
     blk=map_inputz;
 elseif mapnum==33
     blk=imread('HTree_4_24193');%4 level H tree with 24193 free spaces
-    blk=imbinarize(blk);
+    blk=im2bw(blk);
     m2=size(blk,1);
     n2=size(blk,2);
     map_inputz=zeroes(m2,n2);
