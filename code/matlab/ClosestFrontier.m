@@ -12,10 +12,15 @@ function [movecount,k,nodecount] = ClosestFrontier(k,itr)
 % move.
 % The DIJKSTRA distance is calculated in each cycle to find the shortest
 % distance from all particles to the frontiers.
-% There are 21 maps to choose from: 1 through 26. Map specifications can be
-% found in BlockMaps and selected in G.mapnum
+% There are 33 maps to choose from: 1 through 22 being
+% created through matrices and 24 through 33 being image read maps.
+% Map specifications can be found in blockMaps.m and selected by G.mapnum
+% 
 %
-%  Developers:
+%
+%
+%
+%  Authors:
 %  Aaron T. Becker
 %     atbecker@uh.edu
 %  Arun Mahadev
@@ -37,7 +42,7 @@ G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=1;% Default 0, set to 1 if video is to be made
+G.videoflag=0;% Default 0, set to 1 if video is to be made
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
