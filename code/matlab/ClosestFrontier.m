@@ -36,7 +36,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =25;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =31;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -103,7 +103,7 @@ end
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
             moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
             %The shortest path to a frontier cell is selected by expanding from particles
-            steps = min(inf,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
+            steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
                 nodecount(iter)=nnz(frontier_exp);%Update the nodes visited in each step
@@ -202,7 +202,9 @@ end
                 drawcirc()%Draw each robot again
             end
             drawnow
-            makemymovie()
+            if G.videoflag==1
+                makemymovie()
+            end
         end
     end
 %% Drawing scatter circles in the location of particles

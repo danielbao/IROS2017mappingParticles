@@ -11,7 +11,7 @@ Q = find(Graph==0); %  create vertex set Q
 dist = Inf*ones(size(Graph));
 prevL = repmat('?',size(Graph));
 prev = -1*ones(size(Graph));
-path = []; %#ok<NASGU>
+path = ''; %#ok<NASGU>
 pathL = [];       
 dist(source) = 0;  % Distance from source to source is zero
 dist=flipud(dist);
