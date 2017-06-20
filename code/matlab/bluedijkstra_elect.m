@@ -137,15 +137,15 @@ movecount=G.movecount;
             %                end
             %                 moveloc=G.Moves(moveloc,mv);
             for j=1:numel(moveSeq)
-                if G.goal
-                    [goalxy(1,1),goalxy(1,2)]=ind2sub(size(G.obstacle_pos),G.goal);
-                    scatter(goalxy(1,2),goalxy(1,1),'filled','g');
-                    drawnow();
-                    if G.movecount==0 || G.movecount==50
-                        pause
-                    end
-                    %          makemymovie();
-                end
+%                 if G.goal
+%                     [goalxy(1,1),goalxy(1,2)]=ind2sub(size(G.obstacle_pos),G.goal);
+%                     scatter(goalxy(1,2),goalxy(1,1),'filled','g');
+%                     drawnow();
+%                     if G.movecount==0 || G.movecount==50
+%                         pause
+%                     end
+%                              makemymovie();
+%                 end
                 moveto(moveSeq(j));
                 if G.boundvec~=G.goal
                     break
@@ -256,7 +256,13 @@ movecount=G.movecount;
 %% Drawing scatter circles the size of matrix cell rather than in point size
     function drawcirc()
         h=scatter(G.robscaty,G.robscatx,'r','filled');
+%         if G.goal
+%                     [goalxy(1,1),goalxy(1,2)]=ind2sub(size(G.obstacle_pos),G.goal);
+%                     scatter(goalxy(1,2),goalxy(1,1),'filled','g');
+%                     %          makemymovie();
+%         end
         l=scatter(G.leady,G.leadx,'g','filled');% Create a scatter plot and return a handle to the 'hggroup' object
+        drawGoal();
         %Obtain the axes size (in axpos) in Points
         currentunits = get(gca,'Units');
         set(gca, 'Units', 'Points');
@@ -268,8 +274,22 @@ movecount=G.movecount;
         
         drawnow
     end
+%% Drawing the Goal
+    function drawGoal()
+        if G.goal
+            [goalxy(1,1),goalxy(1,2)]=ind2sub(size(G.obstacle_pos),G.goal);
+            scatter(goalxy(1,2),goalxy(1,1),'filled','g');
+            
+            drawnow();
+            if G.movecount==0 || G.movecount==50
+                %pause
+            end
+            %          makemymovie();
+        end
+    end
 %% Updating the displayed image map
     function updateMap() %
+        
         im = ones(size(G.obstacle_pos)); % 1== undiscovered
         
         im(G.free) = 2*G.robvec; %2 = robots draw robots on map

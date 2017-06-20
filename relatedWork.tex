@@ -5,14 +5,13 @@
 
 Coverage using one robot is a canonical robotics problem \cite{choset2001coverage}. It has been studied in-depth for many applications including lawn mowing, harvesting, floor cleaning, 3D printing, robotic painting, and others. 
 
-Coverage means the robot has passed within one robot radius of every location in the workspace. Coverage with a swarm of robots is a key ability for a range of applications because swarms have higher fault tolerance and reduce completion time. Correspondingly, it has been studied from a control-theoretic perspective in  both centralized and decentralized approaches. For examples of each, see  \cite{zheng2005multi} and \cite{wagner1999distributed}.
+Coverage means that the robot has passed within one robot radius of every location in the workspace. Coverage with a swarm of robots is a key ability for a range of applications because swarms have higher fault tolerance and reduced completion time. Correspondingly, it has been studied from a control-theoretic perspective in  both centralized and decentralized approaches. For examples of each, see  \cite{zheng2005multi} and \cite{wagner1999distributed}.
 %where the coverage is performed in such a way that robots are not aware of each other's existence but always cover a cell that is a non-critical point which does not disconnect the graph. 
 
-Previous methods focus mostly on extending single robot coverage techniques to multi-robot systems. Solving coverage for synchronous multi-robots using on-line coverage techniques such as the boustrophedon technique of subdividing the 2D space into cells as in \cite{latimer2002towards} focuses on moving the robot teams in unison until they identify obstacles in their path. 
+Previous methods focus mostly on extending single robot coverage techniques to multi-robot systems. Solving coverage for synchronous multi-robots using online coverage techniques such as the boustrophedon technique of subdividing the 2D space into cells as in \cite{latimer2002towards} focuses on moving the robot teams in unison until they identify obstacles in their path. 
 Once that happens, the team divides into smaller teams that continue the search in the smaller cells. 
-This method has a similarity with our particles in the sense that robots try to move in the same direction as long as possible. 
-In our problem of interest the particles always move in the same direction.  
-The frontier cells exploration mentioned in \cite{yamauchi1998frontier} is an algorithm that is highly explorative as target locations to expand are selected using information from each robot.
+This method is similar to our particles in the sense that robots try to move in the same direction as long as possible, but in our problem of interest the particles always move in the same direction and do not subdivide the space.  
+The frontier cells exploration mentioned in \cite{yamauchi1998frontier} is an algorithm that is highly expansive as target locations to explore are selected using information from each robot, not a shared global map.
  Many algorithms have been developed after this pioneering work, and it showed how algorithms for single robot could be expanded to multi-robot systems. 
  The explorative bias of the technique allows it to define target cells of high priority to explore.   
 
@@ -31,7 +30,7 @@ For the linear-search problem, the optimal competitive ratio is 9,
 as was first shown by Beck and Newman \cite{BN70} and generalized by Gal~\cite{G72,G74}: The search should alternate
 between going to the right and to the left, at each iteration doubling
 her step size. This can be extended to other scenarios: For the case in which changing direction during the course 
-of the search incurs an additional cost of $d$, Demaine et al.~\cite{dfg-olstc-06} showed that an optimal strategy can achieve
+of the search incurs an additional cost of $d$, Demaine et al.~\cite{dfg-olstc-06} showed that an optimal strategy can 
 locate an object with total cost $9D+2d$, which is optimal; see Arkin et al.~\cite{abd+-octtc-05} for the generalized
 offline problem of covering with turn cost. Other related algorithmic work in an unknown setting includes Kao et al.~\cite{KRT96}
 in a randomized setting, Baeza-Yates et al.~\cite{BCR93} for searching in the plane; for broad surveys on mathematical

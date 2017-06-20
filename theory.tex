@@ -25,13 +25,13 @@ The expected number of moves for one particle to cover a 1D area of length $m$ i
 	\includegraphics[width=1.0\columnwidth]{MaxGapm20n5s1v3.pdf}
 \end{center}
 \caption{\label{fig:coverage1d}
-Exploring a 1D environment of size $m$ with $n$ particles. Here $m=20$ and $n=6$. $\pmin=4$, $\pmax=1$ and $g_{max}= 7$
+Exploring a 1D environment of size $m$ with $n$ particles of unit size. Here $m=20$ and $n=6$. $\pmin=4$, $\pmax=19$ and $g_{max}= 7$
 }
 \end{figure}
 
 
-Let $\mathbf{p}$ be the list of positions of $n$ particles uniformly distributed from $[1, m]$.
-As shown in Fig. \ref{fig:coverage1d}, the number of moves to discover the left and right boundaries is bounded by the maximum and minimum particles $ \pmin =\min(\mathbf{p})$, $\pmax =\max(\mathbf{p})$, requiring moving left $\pmin$, followed by a move of $m-(\pmax - \pmin ) $ right.
+Let $\mathbf{p}$ be the list of positions of $n$ unit size particles uniformly distributed from $[1, m]$.
+As shown in Fig. \ref{fig:coverage1d}, the number of moves to discover the left and right boundaries is bounded by the maximum and minimum particles $ \pmin =\min(\mathbf{p})$, $\pmax =\max(\mathbf{p})$, requiring moving left $\pmin$, followed by a move of $m-(\pmax - \pmin )+1 $ right.
 When $n=m$, the algorithm requires 2 moves, one left, one right.
 The minimum time with $n\in[2,m-1]$ occurs with $\pmin$ at 1 and $\pmax$ at $m$, requiring 3 moves, 1 left followed by 2 moves to the right.  
 
@@ -48,7 +48,7 @@ The expected number of moves to reach both boundaries for $n$ particles in 1D is
 To fully map the area from 1 to $m$ requires that every position from 1 to $m$ be visited by at least one particle.  This time is dominated by the maximum gap $\overline{g}$. The total number of moves is then $ 2 \pmin +m- \pmax +1 + \max \left( \overline{g} - \left(\pmin + m-\pmax \right),0 \right)$.
 
 
- If all the particles are unit size, there are $m-n$ spaces, and these can be located before, between, or after the $n$ particles in $n+1$ locations giving ${m-n \choose n+1}$ possible configurations. The largest gap can be calculated exactly using a recurrence equation \cite{reviriego2011expected}, but a tight bound when
+ Since these particles are unit size, there are $m-n$ spaces, and these can be located before, between, or after the $n$ particles in $n+1$ locations giving ${m-n \choose n+1}$ possible configurations. The largest gap can be calculated exactly using a recurrence equation \cite{reviriego2011expected}, but a tight bound when
 $m>n \log{n}$ is $\frac{m-n}{n+1} + \Theta \left( \sqrt{\frac{ (m-n)\log(n+1)}{n+1}} \right)$\cite{Raab1998}. 
 
 %\todo{I want an analytical result for the expected maximum gap. An analytical result for the maximum gap is given in \url{http://www.nebrija.es/~jmaestro/esa/papers/JDA2011.pdf}, but I have been unable to solve the coefficients in equation (18).  The same result is also in Section 9.4 of An Introduction to the Analysis of Algorithms, Second Edition by Robert Sedgewick and Philippe Flajolet, which I have ordered but don't have yet. -Aaron}
@@ -146,7 +146,7 @@ If the environment is unknown, as it is in our case, the best achievable competi
 
 \subsubsection{2D mapping with $n$ particles}
 
-The problem with mapping with $n$ particles is also to identify which move sequence guarantees the shortest path in the worst case.
+Another problem with this type of mapping is to identifying which move sequence guarantees the shortest path in the worst case.
 %At the beginning there can be at most four frontier cells per particle to be explored. 
  %As the particles begin to move, the number of frontier cells explored and the number of free cells identified increases. 
  
@@ -234,14 +234,14 @@ In some scenarios Alg.~\ref{alg:ClosestFrontier} can perform worse than DFS with
 \includegraphics[width=1.0\columnwidth]{greedy2}
 \end{center}
 \caption{\label{fig:square-worse-than-opt}
-The greedy strategy Alg.~\ref{alg:ClosestFrontier} could go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal strategy, which visits the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
+Alg.~\ref{alg:ClosestFrontier} is not optimal in all cases. Alg.~\ref{alg:ClosestFrontier}, which is greedy, could go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal solution, which visits the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
 \end{figure}
 	
 \begin{figure}
 \begin{center}	\includegraphics[width=0.8\columnwidth]{greedy1}
 \end{center}
 \caption{\label{fig:greed-worse-than-dfs}
-In this example, using Alg.~\ref{alg:ClosestFrontier} is $1.5\times$ worse than DFS using only particle 2.}
+Alg.~\ref{alg:ClosestFrontier} can be worse than DFS in some cases as well. In this example, using Alg.~\ref{alg:ClosestFrontier} is $1.5\times$ worse than DFS using only particle 2.}
 %If the move preference order is $\{l,u,r,d\}$ using Alg.~\ref{alg:ClosestFrontier}. then coverage with two particles takes approximately 1.5 times longer than with just the bottom right particle.
 \end{figure}
 

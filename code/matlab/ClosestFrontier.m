@@ -30,19 +30,19 @@ function [movecount,k,nodecount] = ClosestFrontier(k,itr)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin Initialization
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
-    k = 200;%Default num particles
+    k = 2;%Default num particles
     itr=1;
 end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =31;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =1;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.videoflag=1;% Default 0, set to 1 if video is to be made
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
