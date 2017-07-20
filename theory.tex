@@ -2,11 +2,10 @@
 \section{Theory}
 \label{sec:theory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-This section examines the problem of mapping with uniform inputs in 1 and 2 dimensions.
+This section examines the problem of mapping with uniform inputs in 1 and 2 dimensions. For ease of exposition this section represents workspaces as discretised regions. Future work should extend this to continuous regions.
  
 \subsection{Mapping in 1D}
-We begin with the single particle case, then proceed to the $n$ particle case.
-
+We begin with the single particle case, then proceed to the $n$ particle case. 
 \subsubsection{1D mapping with 1 particle}
 A particle is initialized uniformly randomly in a linear free-space $m$ units wide.  To \emph{map} this region the particle needs to choose one direction, move until it hits a boundary, and then switch direction and move until it reaches the other boundary.
 
@@ -25,13 +24,13 @@ The expected number of moves for one particle to cover a 1D area of length $m$ i
 	\includegraphics[width=1.0\columnwidth]{MaxGapm20n5s1v3.pdf}
 \end{center}
 \caption{\label{fig:coverage1d}
-Exploring a 1D environment of size $m$ with $n$ particles. Here $m=20$ and $n=6$. $\pmin=4$, $\pmax=1$ and $g_{max}= 7$
+Exploring a 1D environment of size $m$ with $n$ particles of unit size. Here $m=20$ and $n=6$. $\pmin=4$, $\pmax=19$ and $g_{max}= 7$
 }
 \end{figure}
 
-
-Let $\mathbf{p}$ be the list of positions of $n$ particles uniformly distributed from $[1, m]$.
-As shown in Fig. \ref{fig:coverage1d}, the number of moves to discover the left and right boundaries is bounded by the maximum and minimum particles $ \pmin =\min(\mathbf{p})$, $\pmax =\max(\mathbf{p})$, requiring moving left $\pmin$, followed by a move of $m-(\pmax - \pmin ) $ right.
+For $n>1$ the average expected number of moves is calculated as follows.
+Let $\mathbf{p}$ be the list of positions of $n$ unit size particles uniformly distributed from $[1, m]$.
+As shown in Fig. \ref{fig:coverage1d}, the number of moves to discover the left and right boundaries is bounded by the maximum and minimum particles $ \pmin =\min(\mathbf{p})$, $\pmax =\max(\mathbf{p})$, requiring moving left $\pmin$, followed by a move of $m-(\pmax - \pmin )+1 $ right.
 When $n=m$, the algorithm requires 2 moves, one left, one right.
 The minimum time with $n\in[2,m-1]$ occurs with $\pmin$ at 1 and $\pmax$ at $m$, requiring 3 moves, 1 left followed by 2 moves to the right.  
 
@@ -40,15 +39,17 @@ The maximum $2(m-n+1)$ occurs when the particles are arranged from $m-n$ to $m$,
 This is drawing without replacement $n$ times from the set $[1, m]$.  The minimum is distributed between 1 and $m-n$, the maximum is distributed between $n$ and $m$.
 
 The expected number of moves to reach both boundaries for $n$ particles in 1D is 
+
 \begin{align}
-\frac{1}{{m \choose n}} \sum_{\pmin = 1}^{m-n+1}  \sum_{\pmax = \pmin +n-1}^{m}   {\pmax -\pmin-1 \choose n-2} \left( 2 \pmin +m- \pmax +1\right)  \nonumber \\
-= \frac{3(1+m)}{1+n}\label{eq:expectedMoveskparticles1D}
-\end{align}
+{\scriptstyle \frac{1}{{m \choose n}} \sum_{\pmin = 1}^{m-n+1}  \sum_{\pmax = \pmin +n-1}^{m}   {\pmax -\pmin-1 \choose n-2} \left( 2 \pmin +m- \pmax +1\right)-\frac{\left(m-n+1\right)}{{m \choose n}}} \nonumber
+\\= \frac{3(1+m)}{1+n} - \frac{\left(m-n+1\right)}{{m \choose n}}
+\label{eq:expectedMoveskparticles1D}
+ \end{align}
 
-To fully map the area from 1 to $m$ requires that every position from 1 to $m$ be visited by at least one particle.  This time is dominated by the maximum gap $\overline{g}$. The total number of moves is then $ 2 \pmin +m- \pmax +1 + \max \left( \overline{g} - \left(\pmin + m-\pmax \right),0 \right)$.
+This reduces to Eqn.~\eqref{eq:expectedMoves1particle1D} when $n=1$. To fully map the area from 1 to $m$ requires that every position from 1 to $m$ be visited by at least one particle. This time is dominated by the maximum gap $\overline{g}$. The total number of moves is then $ 2 \pmin +m- \pmax +1 + \max \left( \overline{g} - \left(\pmin + m-\pmax \right),0 \right)$.
 
 
- If all the particles are unit size, there are $m-n$ spaces, and these can be located before, between, or after the $n$ particles in $n+1$ locations giving ${m-n \choose n+1}$ possible configurations. The largest gap can be calculated exactly using a recurrence equation \cite{reviriego2011expected}, but a tight bound when
+ Since these particles are unit size, there are $m-n$ spaces, and these can be located before, between, or after the $n$ particles in $n+1$ locations giving ${m-n \choose n+1}$ possible configurations. The largest gap can be calculated exactly using a recurrence equation \cite{reviriego2011expected}, but a tight bound when
 $m>n \log{n}$ is $\frac{m-n}{n+1} + \Theta \left( \sqrt{\frac{ (m-n)\log(n+1)}{n+1}} \right)$\cite{Raab1998}. 
 
 %\todo{I want an analytical result for the expected maximum gap. An analytical result for the maximum gap is given in \url{http://www.nebrija.es/~jmaestro/esa/papers/JDA2011.pdf}, but I have been unable to solve the coefficients in equation (18).  The same result is also in Section 9.4 of An Introduction to the Analysis of Algorithms, Second Edition by Robert Sedgewick and Philippe Flajolet, which I have ordered but don't have yet. -Aaron}
@@ -81,8 +82,7 @@ On the other hand, moving a sufficiently large number $M$ of steps (known to sat
 scan yields $(M,2)$, which is optimal with respect to scan cost, but bad in terms of the cost for motion.
 
 Balancing the competitive factor for both parameters can be achieved as follows:
-perform the $i$th scan at position $i^i$. This yields a simultaneous competitive factor of 
-$O(\log D/\log\log D)$ for {\em both} parameters.
+perform the $i$th scan at position $i^i$. This yields a simultaneous competitive factor of $O(\log D/\log\log D)$ for {\em both} parameters.
 
 \begin{theorem}
 \label{th:eyetoeye}
@@ -113,13 +113,9 @@ Because $j\leq \log D/ W(\log D)$, we obtain
 \begin{align}
 \frac{(j+1)^{(j+1)}}{j^j}\leq \mathrm{e}\frac{\log n}{ W(\log n)}+\mathrm{e}\label{eq:MoveDistanceRatioInequality}
 \end{align}
-for $j>0$. Clearly, this is again in within a factor of $\Theta(\log D/ \log\log D)$ of the optimum.
-
-To see that this balanced factor is best possible, observe that $\left(\frac{\log D}{\log\log D}\right)^{\left(\frac{\log D}{\log\log D}\right)}\in \Theta(D)$,
-with the base corresponding to the ratio between step lengths and the exponent to the number of scans.
-Therefore, using significantly fewer than $\log D/ \log\log D$ scans would require increasing the base, yielding a worse competitive factor
-for the step length; on the other hand, decreasing the base in order to decrease the competitive factor
-for the step length would require increasig the exponent, yielding a worse competitive factor for the scan cost.
+ for $j>0$. Clearly, this is again in within a factor of $\Theta(\log D/ \log\log D)$ of the optimum.
+ 
+ To see that this balanced factor is best possible, observe that $\left(\frac{\log D}{\log\log D}\right)^{\left(\frac{\log D}{\log\log D}\right)}\in \Theta(D)$, with the base corresponding to the ratio between step lengths and the exponent to the number of scans. Therefore, using significantly fewer than $\log D/ \log\log D$ scans would require increasing the base, yielding a worse competitive factor for the step length; on the other hand, decreasing the base in order to decrease the competitive factor for the step length would require increasing the exponent, yielding a worse competitive factor for the scan cost.
 \end{proof}
 
 %\subsubsection{German tank problem}
@@ -152,18 +148,18 @@ If the environment is unknown, as it is in our case, the best achievable competi
 
 \subsubsection{2D mapping with $n$ particles}
 
-The problem with mapping with $n$ particles is also to identify which move sequence guarantees the shortest path in the worst case.
+Another problem with this type of mapping is to identifying which move sequence guarantees the shortest path in the worst case.
 %At the beginning there can be at most four frontier cells per particle to be explored. 
  %As the particles begin to move, the number of frontier cells explored and the number of free cells identified increases. 
  
  We describe three algorithms of increasing complexity for 2D mapping.
- If we implement a random move algorithm as described in Alg.~\ref{alg:randommove}, at each step the particles all move in the same randomly selected direction until there are no frontier cells left on the map. 
+ If we implement a random move algorithm as described in {\sc RandomMoves}, at each step the particles all move in the same randomly selected direction until there are no frontier cells left on the map. 
  $MoveType$ is a vector that holds the four possible move types. 
  The map $\mathbf{M}$ is a matrix the size of the work space. 
  Each cell of  $\mathbf{M}$ holds one of five values that denote: $Particle$, $Frontier$, $Unknown$, $Free space$ and $Obstacle$. 
  At each step {\sc Frontier} returns the locations of frontier cells in $\mathbf{M}$ and $\mathbf{r}$ has the list of particle locations.
  The $move$ is implemented to update the map $\mathbf{M}$ and the particle locations $\mathbf{r}$ by calling {\sc Move\&\!Update}. 
- Alg.~\ref{alg:randommove} requires minimal computation and is probabilistically complete, so eventually the swarm maps the free cells~\cite{kahn1989cover}. 
+{\sc RandomMoves} requires minimal computation and is probabilistically complete, so eventually the swarm maps the free cells~\cite{kahn1989cover}. 
  However, this method of mapping is inefficient, resulting in long mapping times, especially with small numbers of particles in large, torturous maps with many turns. 
 
   \begin{algorithm}
@@ -180,17 +176,17 @@ The problem with mapping with $n$ particles is also to identify which move seque
 
 A better way to map the world is to deliberately move particles toward frontier cells. 
 We could choose one particle as the $elect$ particle and perform motion planning using this particle. 
-In Alg.~\ref{alg:ElectParticle}, one of the particles is selected as $elect$. 
+In {\sc ElectParticle}, one of the particles is selected as $elect$. 
 As long as the number of frontiers to be visited is at least one, the algorithm proceeds by generating a $mvSq$ from the current position of the elect particle to the nearest frontier cell. 
 The $mvSq$ is generated by a breadth-first-search (BFS) shortest path algorithm which requires the map $\mathbf{M}$, source $elect$, and the cells {\sc Frontier}$(\mathbf{M})$. A representative $mvSq$ is $\langle u,r,d,d,r,u,\ldots\rangle$. 
 The list of moves in $mvSq$ are implemented by iteratively calling the {\sc Move\&\!Update} function for the length of $mvSq$. 
 
 
-Alg.~\ref{alg:ElectParticle} will explore the target frontier cell by the end of $mvSq$. 
+{\sc ElectParticle} will explore the target frontier cell by the end of $mvSq$. 
 However, often with large-population swarms the whole $mvSq$ need not be implemented. 
 Every time {\sc Move\&\!Update} is called, the nearest frontier is updated and $mvSq$ is also updated because as the particles start to move, the target frontier cell  might be explored by a non-elect  particle. 
 
- Alg.~\ref{alg:ClosestFrontier} exploits this fact by computing a BFS shortest path from all particles to all frontier cells.   
+ {\sc ClosestFrontier} exploits this fact by computing a BFS shortest path from all particles to all frontier cells.   
   \begin{algorithm}
 \caption{\sc ElectParticle($\mathbf{M},\mathbf{r}$)   \label{alg:ElectParticle}}
 \begin{algorithmic}[1] 
@@ -204,14 +200,14 @@ Every time {\sc Move\&\!Update} is called, the nearest frontier is updated and $
 \end{algorithmic}
 \end{algorithm}
 
-In each loop of Alg.~\ref{alg:ClosestFrontier}, all the moves in $mvSq$ are implemented to explore the target frontier cell since it is the shortest possible route to a frontier cell. 
+In each loop of {\sc ClosestFrontier}, all the moves in $mvSq$ are implemented to explore the target frontier cell since it is the shortest possible route to a frontier cell. 
 At time 0, there will be at most 4$n$ equally valid destinations that can be visited since cells to the side of each particle not neighboring another particle are frontier cells. 
 %Our BFS expands the search in order, ${l,r,u,d}$, so the first move is $l$. 
 Each $mvSq$ guarantees classification of one frontier cell into obstacle or free space.
-When a frontier cell is explored it is labelled either free or obstacle. There can be a net gain of at most two frontier cells per particle that encounters a free cell or no new frontier cells if the frontier cell contained an obstacle. 
+When a frontier cell is explored it is labeled either free or obstacle. There can be a net gain of at most two frontier cells per particle that encounters a free cell or no new frontier cells if the frontier cell contained an obstacle. 
 
  
-The simulation results in Section \ref{sec:simulation} show that both map complexity and distribution affect the number of moves taken to map the work space. Alg.~\ref{alg:randommove} uses no information from the data except for checking completion. Alg.~\ref{alg:ElectParticle} uses the location and distance data from one particle to map the work space. Alg.~\ref{alg:ClosestFrontier} improves the performance of mapping by using all the data. 
+The simulation results in Section \ref{sec:simulation} show that both map complexity and distribution affect the number of moves taken to map the work space. {\sc RandomMove} uses no information from the data except for checking completion. {\sc ElectParticle} uses the location and distance data from one particle to map the work space. {\sc ClosestFrontier} improves the performance of mapping by using all the data. 
 
   \begin{algorithm}
 \caption{\sc ClosestFrontier($\mathbf{M},\mathbf{r}$) \label{alg:ClosestFrontier}}
@@ -228,10 +224,9 @@ The simulation results in Section \ref{sec:simulation} show that both map comple
 \end{algorithm}
 %<Dominik>
  %Comment: Just some quick text because this section is still missing. Feel free to remove or change.
-While Alg.~\ref{alg:ClosestFrontier} is usually the more reasonable approach in practice than DFS with a single particle, we are only able to show a trivial weaker bound on the corresponding moves.
-Alg.~\ref{alg:ClosestFrontier} is not optimal. It can need $\Omega(n^2)$ moves while an optimal strategy only needs $O(n)$.
+While {\sc ClosestFrontier} is usually the more reasonable approach in practice than DFS with a single particle, we are only able to show a trivial weaker bound on the corresponding moves. {\sc ClosestFrontier} is not optimal. It can need $\Omega(n^2)$ moves while an optimal strategy only needs $O(n)$.
 An example can be seen in Fig.~\ref{fig:square-worse-than-opt}.
-In some scenarios Alg.~\ref{alg:ClosestFrontier} can perform worse than DFS with a single particle, e.g., in Fig.~\ref{fig:greed-worse-than-dfs}.
+In some scenarios {\sc ClosestFrontier} can perform worse than DFS with a single particle, e.g., in Fig.~\ref{fig:greed-worse-than-dfs}.
 
 
 
@@ -240,14 +235,14 @@ In some scenarios Alg.~\ref{alg:ClosestFrontier} can perform worse than DFS with
 \includegraphics[width=1.0\columnwidth]{greedy2}
 \end{center}
 \caption{\label{fig:square-worse-than-opt}
-The greedy strategy Alg.~\ref{alg:ClosestFrontier} could go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal strategy, which visits the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
+{\sc ClosestFrontier} is not optimal in all cases. {\sc ClosestFrontier}, which is greedy, could go right first and then cover the square with a single particle which takes $\Omega(n^2)$ moves while the optimal solution, which visits the square in parallel using all $n$ particles, only needs $O(n)$ moves.}
 \end{figure}
 	
 \begin{figure}
 \begin{center}	\includegraphics[width=0.8\columnwidth]{greedy1}
 \end{center}
 \caption{\label{fig:greed-worse-than-dfs}
-In this example, using Alg.~\ref{alg:ClosestFrontier} is $1.5\times$ worse than DFS using only particle 2.}
+{\sc ClosestFrontier} can be worse than DFS in some cases as well. In this example, using {\sc ClosestFrontier} is $1.5\times$ worse than DFS using only particle 2.}
 %If the move preference order is $\{l,u,r,d\}$ using Alg.~\ref{alg:ClosestFrontier}. then coverage with two particles takes approximately 1.5 times longer than with just the bottom right particle.
 \end{figure}
 
@@ -259,7 +254,7 @@ In this example, using Alg.~\ref{alg:ClosestFrontier} is $1.5\times$ worse than 
 %\end{figure}
 %TRIVIAL UPPER BOUND
 \begin{theorem}
-	Alg.~\ref{alg:ClosestFrontier} needs at most $0.5 \cdot m \cdot (m+1)$ moves where $m$ is the number of fields. 
+	{\sc ClosestFrontier} needs at most $0.5 \cdot m \cdot (m+1)$ moves where $m$ is the number of fields. 
 \end{theorem}
 \begin{proof}
 	The distance between a particle and the closest frontier cell can be at most the number of all already visited cells.
@@ -295,7 +290,7 @@ In this example, using Alg.~\ref{alg:ClosestFrontier} is $1.5\times$ worse than 
 %<Dominik>
 %Comment: Just some quick text because this section is still missing. Feel free to remove or change.
 \begin{theorem}
-	Alg.~\ref{alg:ClosestFrontier} has a computational complexity in $O(m^2)$.
+	{\sc ClosestFrontier} has a computational complexity in $O(m^2)$.
 \end{theorem}
 \begin{proof}
 	For an environment with $m$ cells, there are at most $m$ iterations.
