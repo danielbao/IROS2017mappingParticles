@@ -28,13 +28,13 @@ In previous work \cite{mahadev2016collecting} we provided an algorithm that guar
  This paper focuses on discrete 2D workspaces.
 Fig. \ref{fig:Coverage2DwithUnformControl} represents the complete mapping of a workspace using a large number of particles.  
 At the initial step, all  particles (red circles) are in free cells (white squares) and are surrounded by the unknown frontier cells (blue squares). The goal is to map the unknown space (grey).
-By commanding the particles to take one step in a particular direction, we can categorize the the frontier cells in this direction as either obstacle(black squares) or free (white squares).
- If the particle was able to move, that frontier cell is labelled as free, and new frontier cells are added to adjacent areas that have not been mapped.
- If the particle was unable to move, that frontier cell is labelled as obstacle.
+By commanding the particles to take one step in a particular direction, we can categorize the frontier cells in this direction as either obstacle (black squares) or free (white squares).
+ If the particle was able to move, that frontier cell is labeled as free, and new frontier cells are added to adjacent areas that have not been mapped.
+ If the particle was unable to move, that frontier cell is labeled as obstacle.
 The goal is to explore all  frontier cells, thereby discovering all connected free cells and the obstacles that surround them. 
 
 The paper is arranged as follows. 
-After a review of recent related work in Sec.~\ref{sec:RelatedWork}, we introduce the algorithms to perform mapping, coverage, and subset coverage and also discuss the complexity in Sec.~\ref{sec:theory}.
+After a review of recent related work in Sec.~\ref{sec:RelatedWork}, we introduce the algorithms to perform mapping, coverage, and subset coverage and also discuss the complexity of mapping in Sec.~\ref{sec:theory}.
  In Sec.~\ref{sec:simulation} we discuss the performance of the algorithms on parameters which determine efficiency based on different environments, particle distribution and completion speed. We conclude this paper by summarizing the results and discussing
 % Sec.  \ref{sec:expResults} 
  directions for further research in Sec.  \ref{sec:conclusion}.

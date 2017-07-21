@@ -31,7 +31,7 @@ Full coverage in 1D with $m$ = 1000 and $n=10$ particles requires 60.7 moves on 
 
   
   \subsection{2D mapping}  
-  All simulations used maps with 5000 free cells.
+2D simulations were conducted in Matlab, with code available at \cite{Arun2017matlabUniformMapping}. All simulations used maps with 5000 free cells.
   Each simulation trial was repeated 100 times.
   The number of particles ranged from 100 to 5000 by increments of 100.
   In each run except Fig.~\ref{fig:RegionvsFloodvsUniform} the particles were placed uniformly randomly throughout the workspace. 
@@ -49,7 +49,7 @@ Full coverage in 1D with $m$ = 1000 and $n=10$ particles requires 60.7 moves on 
 	\includegraphics[width=1.0\columnwidth]{MappingAlg3maps}
 \end{center}
 \caption{\label{fig:MappingAlg3maps}
-Comparison of mapping using the Closest Frontier algorithm on 2D maps of four types and 1D mapping on a linear map. 
+Comparison of mapping using the {\sc ClosestFrontier} algorithm on 2D maps of four types and 1D mapping on a linear map. 
 Each map has 5000 free cells.
 }
 \end{figure}
@@ -64,13 +64,13 @@ The deviations for the {\sc ClosestFrontier} are also much less than the other t
 \end{center}
 \vspace{-2em}
 \caption{\label{fig:FrontierNodesVsk}
-Performing mapping on the complex 2D map with $n=1000$ particles. Random moves requires 1683 moves, Elect particle requires 578 moves and {\sc ClosestFrontier} requires 215 moves on average}
+Performing mapping on the complex 2D map with $n=1000$ particles. {\sc RandomMoves} requires 1683 moves, {\sc ElectParticle} requires 578 moves and {\sc ClosestFrontier} requires 215 moves on average}
 \end{figure}	
 
 
 %%%%%%%%%%%%%%%  fig:Alg_linlogplot
 
-Fig.~\ref{fig:Alg_linlogplot} compares the performance of {\sc RandomMove}, {\sc ElectParticle}, and \ref{alg:ClosestFrontier} on the complex 2D map. 
+Fig.~\ref{fig:Alg_linlogplot} compares the performance of {\sc RandomMove}, {\sc ElectParticle}, and {\sc ClosestFrontier} on the complex 2D map. 
  For all algorithms the mean completion time and standard deviation of the completion time decreased with increasing numbers of particles. 
 {\sc RandomMoves} performs worst, with the largest number of required moves and the largest standard deviation of required moves. {\sc RandomMoves} is slightly better than {\sc ElectParticle} for large numbers of particles, but both algorithms are beat by {\sc ClosestFrontier}, which has the minimum number of required moves and the smallest standard deviation.
   The maximum number of moves required using the {\sc ClosestFrontier} algorithm was for $k$=100 with an average of $\approx$1816 moves and standard deviation of 160 moves.
@@ -86,7 +86,7 @@ Comparison of three algorithms - {\sc RandomMoves}, {\sc ElectParticle} and {\sc
 \end{figure}
 
 %%%%%%%%%%%%%%%  fig:CoverageMappingForaging
-Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and subset coverage on the complex 2D map. All trials used Alg.~\ref{alg:ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells. Similarly, subset coverage has a known map, but 10\% of the empty cells are labeled as frontier cells. Subset coverage is easier than coverage and coverage is easier than mapping.
+Fig.~\ref{fig:CoverageMappingForaging} compares mapping, coverage, and subset coverage on the complex 2D map. All trials used {\sc ClosestFrontier}. Coverage is performed with a known map, but with all free cells initialized to be frontier cells. Similarly, subset coverage has a known map, but 10\% of the empty cells are labeled as frontier cells. Subset coverage is easier than coverage and coverage is easier than mapping.
 
 \begin{figure}
 \begin{center}
@@ -105,7 +105,7 @@ $Region~fill$ places all $n$ particles at a minimum Manhattan distance from a ra
 $Flood~fill$ places one particle at a randomly selected location in the free space, and places the remaining particles according to a breadth-first expansion inside the free space.
 $Uniform~distribution$ places the particles uniformly randomly.  
 $Region~fill$ and $flood~fill$ have similar performance, while $uniform~distribution$ requires many fewer moves. 
-This is because dispersing particles using only uniform inputs is difficult, and a uniform distribution starts with the particles dispersed, which allows it to map much faster.
+This is because dispersing particles using only uniform inputs is difficult, and a $uniform~distribution$ starts with the particles dispersed, which allows it to map much faster.
 \begin{figure}
 \begin{center}
 	\includegraphics[width=1.0\columnwidth]{RegionvsFloodvsUniform.pdf}
