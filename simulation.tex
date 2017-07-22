@@ -101,17 +101,17 @@ Comparison of three related problems: mapping, coverage, and subset coverage on 
 
 %%%%%%%%%%%%%%%  fig:RegionvsFloodvsUniform
 The final simulation test, shown in Fig.~\ref{fig:RegionvsFloodvsUniform}, compares the effect of different initial particle distributions in the complex 2D map.  
-$Region~fill$ places all $n$ particles at a minimum Manhattan distance from a randomly selected location on the map.
-$Flood~fill$ places one particle at a randomly selected location in the free space, and places the remaining particles according to a breadth-first expansion inside the free space.
-$Uniform~distribution$ places the particles uniformly randomly.  
-$Region~fill$ and $flood~fill$ have similar performance, while $uniform~distribution$ requires many fewer moves. 
-This is because dispersing particles using only uniform inputs is difficult, and a $uniform~distribution$ starts with the particles dispersed, which allows it to map much faster.
+\emph{Region~fill} places all $n$ particles at a minimum Manhattan distance from a randomly selected location on the map.
+\emph{Flood~fill} places one particle at a randomly selected location in the free space, and places the remaining particles according to a breadth-first expansion inside the free space.
+\emph{Uniform~distribution} places the particles uniformly randomly.  
+\emph{Region~fill} and \emph{flood~fill} have similar performance, while \emph{uniform~distribution} requires many fewer moves. 
+This is because dispersing particles using only uniform inputs is difficult, and a \emph{uniform~distribution} starts with the particles dispersed, which allows it to map much faster.
 \begin{figure}
 \begin{center}
 	\includegraphics[width=1.0\columnwidth]{RegionvsFloodvsUniform.pdf}
 \end{center}
 \caption{\label{fig:RegionvsFloodvsUniform}
-Comparison with different distributions: $flood~fill$, $region~fill$, and $uniform~distribution$ for mapping on the complex 2D map. The results for $flood~fill$ and $region~fill$ overlap. }
+Comparison with different distributions: \emph{flood~fill}, \emph{region~fill}, and \emph{uniform~distribution} for mapping on the complex 2D map. The results for \emph{flood~fill} and \emph{region~fill} overlap. }
 \end{figure}
 
 

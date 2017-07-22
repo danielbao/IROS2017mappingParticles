@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     32183,        749]
-NotebookOptionsPosition[     31134,        709]
-NotebookOutlinePosition[     31522,        726]
-CellTagsIndexPosition[     31479,        723]
+NotebookDataLength[     32734,        759]
+NotebookOptionsPosition[     31685,        719]
+NotebookOutlinePosition[     32073,        736]
+CellTagsIndexPosition[     32030,        733]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -446,15 +446,15 @@ Cell[BoxData[
   RowBox[{
    RowBox[{
     RowBox[{
-     RowBox[{"scans", "[", 
+     RowBox[{"iToiscans", "[", 
       RowBox[{"x_", ",", "c_"}], "]"}], ":=", 
      RowBox[{"Module", "[", 
       RowBox[{
        RowBox[{"{", 
         RowBox[{
-         RowBox[{"cost", "=", "0"}], ",", " ", 
+         RowBox[{"cost", "=", "c"}], ",", " ", 
          RowBox[{"temp", "=", "0"}], ",", " ", 
-         RowBox[{"distance", " ", "=", " ", "0"}]}], "}"}], ",", 
+         RowBox[{"distance", " ", "=", "0"}]}], "}"}], ",", 
        RowBox[{"(*", 
         RowBox[{
          RowBox[{"scans", " ", "cost", " ", "c"}], ",", " ", 
@@ -495,7 +495,7 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"{", 
         RowBox[{
-         RowBox[{"cost", "=", "0"}], ",", " ", 
+         RowBox[{"cost", "=", "c"}], ",", " ", 
          RowBox[{"temp", "=", "0"}], ",", " ", 
          RowBox[{"distance", " ", "=", " ", "0"}]}], "}"}], ",", 
        RowBox[{"(*", 
@@ -518,7 +518,7 @@ Cell[BoxData[
               RowBox[{"(*", 
                RowBox[{
                "try", " ", "to", " ", "move", " ", "to", " ", "position", " ", 
-                SuperscriptBox["i", "i"]}], "*)"}], "+", "c"}]}], " ", 
+                SuperscriptBox["2", "i"]}], "*)"}], "+", "c"}]}], " ", 
             RowBox[{"(*", 
              RowBox[{"do", " ", "the", " ", "ith", " ", "scan"}], "*)"}], ";",
              "\[IndentingNewLine]", 
@@ -536,7 +536,7 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"{", 
         RowBox[{
-         RowBox[{"scans", "[", 
+         RowBox[{"iToiscans", "[", 
           RowBox[{"x", ",", "c"}], "]"}], ",", 
          RowBox[{"c", " ", "x"}], ",", 
          RowBox[{"logScans", "[", 
@@ -573,14 +573,15 @@ Cell[BoxData[
        RowBox[{"ImageSize", "\[Rule]", "Large"}]}], "]"}], ",", 
      RowBox[{"{", 
       RowBox[{"Workspace", ",", "2", ",", 
-       RowBox[{"10", "^", "20"}], ",", 
+       RowBox[{"10", "^", "100"}], ",", 
        RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
      "\[IndentingNewLine]", 
      RowBox[{"{", 
       RowBox[{
        RowBox[{"{", 
         RowBox[{"c", ",", "1", ",", "\"\<scan cost\>\""}], "}"}], ",", "1", 
-       ",", "100000000", ",", 
+       ",", 
+       RowBox[{"10", "^", "20"}], ",", 
        RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}]}], 
     "\[IndentingNewLine]", "]"}]}]}]], "Input",
  CellChangeTimes->{{3.7089904877833433`*^9, 3.708990513483653*^9}, 
@@ -626,33 +627,37 @@ Cell[BoxData[
    3.709663411033361*^9}, {3.709663456257063*^9, 3.7096635053884068`*^9}, {
    3.7096636418392467`*^9, 3.709663657825088*^9}, {3.709663721864225*^9, 
    3.709663725565209*^9}, {3.7096639025003853`*^9, 3.7096639361685762`*^9}, {
-   3.709664328354973*^9, 3.709664328615329*^9}},
+   3.709664328354973*^9, 3.709664328615329*^9}, {3.7097156855573597`*^9, 
+   3.70971571869272*^9}, {3.709715760173037*^9, 3.709715875312039*^9}, {
+   3.709715909952229*^9, 3.709715959520496*^9}},
  ExpressionUUID -> "41fb27b7-7a74-4f9d-ac05-6d4143fb3630"],
 
 Cell[BoxData[
  TagBox[
   StyleBox[
-   DynamicModuleBox[{$CellContext`c$$ = 1., $CellContext`Workspace$$ = 2., 
+   DynamicModuleBox[{$CellContext`c$$ = 1, $CellContext`Workspace$$ = 2, 
     Typeset`show$$ = True, Typeset`bookmarkList$$ = {}, 
     Typeset`bookmarkMode$$ = "Menu", Typeset`animator$$, Typeset`animvar$$ = 
     1, Typeset`name$$ = "\"untitled\"", Typeset`specs$$ = {{
-      Hold[$CellContext`Workspace$$], 2, 100000000000000000000}, {{
-       Hold[$CellContext`c$$], 1, "scan cost"}, 1, 100000000}}, 
+      Hold[$CellContext`Workspace$$], 2, 
+      100000000000000000000000000000000000000000000000000000000000000000000000\
+00000000000000000000000000000}, {{
+       Hold[$CellContext`c$$], 1, "scan cost"}, 1, 100000000000000000000}}, 
     Typeset`size$$ = {554., {119., 121.}}, Typeset`update$$ = 0, 
     Typeset`initDone$$, Typeset`skipInitDone$$ = 
-    True, $CellContext`Workspace$889639$$ = 0, $CellContext`c$889640$$ = 0}, 
+    True, $CellContext`Workspace$1009012$$ = 0, $CellContext`c$1009013$$ = 0}, 
     DynamicBox[Manipulate`ManipulateBoxes[
      1, StandardForm, 
       "Variables" :> {$CellContext`c$$ = 1, $CellContext`Workspace$$ = 2}, 
       "ControllerVariables" :> {
-        Hold[$CellContext`Workspace$$, $CellContext`Workspace$889639$$, 0], 
-        Hold[$CellContext`c$$, $CellContext`c$889640$$, 0]}, 
+        Hold[$CellContext`Workspace$$, $CellContext`Workspace$1009012$$, 0], 
+        Hold[$CellContext`c$$, $CellContext`c$1009013$$, 0]}, 
       "OtherVariables" :> {
        Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
         Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
         Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
          Typeset`skipInitDone$$}, "Body" :> LogPlot[{
-         $CellContext`scans[$CellContext`x, $CellContext`c$$], \
+         $CellContext`iToiscans[$CellContext`x, $CellContext`c$$], \
 $CellContext`c$$ $CellContext`x, 
          $CellContext`logScans[$CellContext`x, $CellContext`c$$]}, \
 {$CellContext`x, 1, $CellContext`Workspace$$}, PlotLabel -> 
@@ -667,9 +672,11 @@ $CellContext`c$$ $CellContext`x,
            "ith scan at \!\(\*SuperscriptBox[\(2\), \(i\)]\)"}, PlotRange -> 
         All, ImageSize -> Large], 
       "Specifications" :> {{$CellContext`Workspace$$, 2, 
-         100000000000000000000, Appearance -> 
-         "Labeled"}, {{$CellContext`c$$, 1, "scan cost"}, 1, 100000000, 
-         Appearance -> "Labeled"}}, "Options" :> {}, "DefaultOptions" :> {}],
+         100000000000000000000000000000000000000000000000000000000000000000000\
+00000000000000000000000000000000, Appearance -> 
+         "Labeled"}, {{$CellContext`c$$, 1, "scan cost"}, 1, 
+         100000000000000000000, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
      ImageSizeCache->{589., {165., 169.}},
      SingleEvaluation->True],
     Deinitialization:>None,
@@ -684,7 +691,10 @@ $CellContext`c$$ $CellContext`x,
  CellChangeTimes->{{3.7096633886164913`*^9, 3.709663411653469*^9}, {
    3.709663461038628*^9, 3.7096634790775146`*^9}, 3.709663512482894*^9, {
    3.709663648191518*^9, 3.70966365443023*^9}, {3.709663723080752*^9, 
-   3.709663726266712*^9}, 3.7096639760177517`*^9, 3.709664329324299*^9}]
+   3.709663726266712*^9}, 3.7096639760177517`*^9, 3.709664329324299*^9, 
+   3.7097156863444443`*^9, 3.709715719392571*^9, 3.70971576178082*^9, {
+   3.709715795606299*^9, 3.709715875993335*^9}, {3.70971591091074*^9, 
+   3.709715960105179*^9}}]
 }, Open  ]],
 
 Cell[BoxData["."], "Input",
@@ -741,15 +751,15 @@ Cell[18327, 430, 179, 3, 23, "Input"],
 Cell[18509, 435, 172, 3, 23, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18718, 443, 8967, 186, 366, "Input"],
-Cell[27688, 631, 2922, 55, 347, "Output"]
+Cell[18718, 443, 9140, 189, 366, "Input"],
+Cell[27861, 634, 3300, 62, 381, "Output"]
 }, Open  ]],
-Cell[30625, 689, 71, 1, 23, "Input"],
-Cell[30699, 692, 99, 1, 23, "Input"],
-Cell[30801, 695, 69, 1, 23, "Input"],
+Cell[31176, 699, 71, 1, 23, "Input"],
+Cell[31250, 702, 99, 1, 23, "Input"],
+Cell[31352, 705, 69, 1, 23, "Input"],
 Cell[CellGroupData[{
-Cell[30895, 700, 150, 3, 23, "Input"],
-Cell[31048, 705, 70, 1, 23, "Output"]
+Cell[31446, 710, 150, 3, 23, "Input"],
+Cell[31599, 715, 70, 1, 23, "Output"]
 }, Open  ]]
 }
 ]
