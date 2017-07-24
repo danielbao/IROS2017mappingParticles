@@ -132,7 +132,7 @@ As long as the all the free cells are connected, depth-first-search (DFS) is the
 %<Dominik> <- this tag is just to ease possible merges. Feel free to edit or delete.
 Even if the environment is known in advance, the problem is NP-hard as can be shown by a trivial reduction to Hamiltonian paths in grid graphs \cite{itai1982hamilton}. %NP-hardness shown in Itai, Alon, Christos H. Papadimitriou, and Jayme Luiz Szwarcfiter. "Hamilton paths in grid graphs." SIAM Journal on Computing 11.4 (1982): 676-686.
 One can easily show that a simple DFS guarantees a competitive ratio of $2$: the depth-first tree has $m-1$ edges and each edge is traversed at most twice. 
-Any path that covers $m$ fields needs to traverse least $m-1$ edges, and hence the depth-first-search is at most twice as long as an optimal coverage path.
+Any path that covers $m$ cells needs to traverse least $m-1$ edges, and hence the depth-first-search is at most twice as long as an optimal coverage path.
 
 For showing that no algorithm can perform better one needs only a simple 1-dimensional graph that goes to the left and to the right.
 If the algorithm chooses to go arbitrarily to one side, we can make it do a long walk of length $m$ and then return it just for a single field on the other side ($2m+1$ vs.\ $2+m$).
@@ -254,7 +254,7 @@ In some scenarios {\sc ClosestFrontier} can perform worse than DFS with a single
 %\end{figure}
 %TRIVIAL UPPER BOUND
 \begin{theorem}
-	{\sc ClosestFrontier} needs at most $0.5 \cdot m \cdot (m+1)$ moves where $m$ is the number of fields. 
+	{\sc ClosestFrontier} needs at most $O(m^2)$ moves where $m$ is the number of cells. 
 \end{theorem}
 \begin{proof}
 	The distance between a particle and the closest frontier cell can be at most the number of all already visited cells.
