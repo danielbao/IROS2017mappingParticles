@@ -135,8 +135,8 @@ One can easily show that a simple DFS guarantees a competitive ratio of $2$: the
 Any path that covers $m$ cells needs to traverse least $m-1$ edges, and hence the depth-first-search is at most twice as long as an optimal coverage path.
 
 For showing that no algorithm can perform better one needs only a simple 1-dimensional graph that goes to the left and to the right.
-If the algorithm chooses to go arbitrarily to one side, we can make it do a long walk of length $m$ and then return it just for a single field on the other side ($2m+1$ vs.\ $2+m$).
-If the algorithm decides to switch the direction after some time after arbitrary zig-zags (of increasing cost) of cost $z$ (center to one side to other side) we decide that there is a single field on both sides.
+If the algorithm chooses to go arbitrarily to one side, we can make it do a long walk of length $m$ and then return it just for a single cell on the other side ($2m+1$ vs.\ $2+m$).
+If the algorithm decides to switch the direction after some time after arbitrary zig-zags (of increasing cost) of cost $z$ (center to one side to other side) we decide that there is a single cell on both sides.
 The algorithm now needs to go one additional time from one side to the other and back (cost $>z$) while the optimum cost would have been $\leq z+3$.
 If the algorithm switches from the second form to the first, the first argument still applies.
 
@@ -258,7 +258,7 @@ In some scenarios {\sc ClosestFrontier} can perform worse than DFS with a single
 \end{theorem}
 \begin{proof}
 	The distance between a particle and the closest frontier cell can be at most the number of all already visited cells.
-	Hence, the distance for visiting the $i^{\textrm{th}}$ field is bounded by $i$.
+	Hence, the distance for visiting the $i^{\textrm{th}}$ cell is bounded by $i$.
 	The overall number of moves is bounded by $\sum_{i=1,\ldots,m} i = 0.5\cdot m\cdot (m+1)$.
 \end{proof}
 %</Dominik>
