@@ -104,8 +104,10 @@ end
         while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec,valueMap); 
+            moveSeq = DijkstraForBoundary_mod_star(G.update_map,roboloc,frontier_vec,valueMap); 
             %The shortest path to a frontier cell is selected by expanding from particles
+            %Now this uses the mod_star to select a path to the lowest cost
+            %frontier cell; not necessarily the closestOne
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
