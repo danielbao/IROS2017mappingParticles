@@ -1,6 +1,7 @@
 function [pathL,goalf] = BFS_Expansion( Graph, source, goal, value )
-%BFS_Expansion BFS of free spaces searching for frontier spaces along
-%levels
+% BFS_Expansion BFS of free spaces searching for frontier spaces along
+% levels to evaluate them based off of a valueMap generated from the
+% indices of the boundaries and 
 %   Approach:
 %   While frontier not found
 %   Expand w/ dir Matrix -> delete u, add four dir nodes if possible
@@ -26,10 +27,11 @@ goalmat=zeros(size(Graph));
 goalmat(goal)=1;% the goals are where it's 1
 goalmat=flipud(goalmat);
 goal=find(goalmat);% Get the indice after you flip the matrix
-% while Q is not empty:
 mincost=100000000000;
 level=0;
-lowvalflag=0;
+lowvalflag=0;%Flag for when a minimum is found
+expandedFrontiers=[];
+% firstFrontier=0;%Temp storage for the greedy first v; not used right now
 % Source node will be selected first from the indices
 
 while numel(Q)>0&& lowvalflag==0%While there are free spaces to explore
@@ -50,9 +52,16 @@ while numel(Q)>0&& lowvalflag==0%While there are free spaces to explore
     frontierFound=0;
     frontiers=zeros(10000); %Pre-allocated array of frontiers and t
     %values for address evaluation
-    while frontierFound==0%Logic might need help here
+    while frontierFound==0%We stop a source expansion once we hit a frontier
         for i = 1:size(dirs,1)%For each direction
-            v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
+            if (dirs(i,1)+ui>0)&&(dirs(i,1)+ui<size(Graph,1))
+                if (dirs(i,2)+uj>0&&(dirs(i,2)+uj<size(Graph,2)))
+                    v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
+                    %We must check the bounds of our expansion
+
+                end
+                
+            end
             %We get the cell in the direction
             if Graph(v) == 0 %only try to move if the vertex is 0
                 alt = 1+dist(u); %distance to node v if we come from node u
@@ -73,7 +82,9 @@ while numel(Q)>0&& lowvalflag==0%While there are free spaces to explore
                         end
                         frontiers(v)=value(v);%store the value of the frontier
                         %in its respective address.
-                        frontierFound=1;
+                        frontierFound=1;%Get out of the while loop once we
+                        % are finished with this level's expansion in all
+                        % directions
                     end
                 end
             end
@@ -84,15 +95,61 @@ while numel(Q)>0&& lowvalflag==0%While there are free spaces to explore
         break;%Get out of the while loop and calculate values;
     end
 end
-%Now we must calculate the levels we need to expand
+%Now we must calculate the levels we need to expand and expand to those
+%levels
+Frontierslvl=zeros(2,100000);% Array to store the new frontiers found by 
+% expanding ith level
+indFrontiers=find(frontiers);%Get the indices of the frontiers
 if lowvalflag~=1
-    levels=getLevels(Graph, frontiers);
+    levels=getLevels(frontiers);
+    %We start the first expansion from our previous frontiers
     for i=1:levels%expand each level;
-        
+        dirs = [ 0,-1;% left
+        -1,0; % up
+        0,1;  % right
+        1,0;];  % down
+        %We take a direction and we apply it to a source node from
+        %frontiers
+        % Select a source node
+        while(size(indFrontiers)>0)
+            u=indFrontiers(1);
+            indFrontiers(1)=[];%remove source frontier from the frontiers
+            [ui,uj] = ind2sub(size(Graph),u);%Get subscripted indices of frontier
+            
+            for j = 1:size(dirs,1)%For each direction
+                if (dirs(i,1)+ui>0)&&(dirs(i,1)+ui<size(Graph,1))
+                    if (dirs(i,2)+uj>0&&(dirs(i,2)+uj<size(Graph,2)))
+                        v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
+                        %We must check the bounds of our expansion
+                        
+                    end
+                    
+                end
+                %Get the expanded node
+                if any(goal==v)&&Graph(v)==0%If it's a frontier and it's a free
+                    %space
+                    Frontierslvl(i,v)=value(v);%Store this frontier in the array
+                    %to expand for the next level.
+                    if level+value(v)<=-1%If we find a better frontier with lower
+                        %value
+                        lowvalflag=1;%Trigger low value flag again and
+                        indFrontiers=[];%Get out of the indFrontier While loop
+                        break;
+                    end
+                    
+                end
+                
+            end
+        end
+
+        if(lowvalflag==1)%endpoint for the minimum found
+            break;
+        end
     end
+
 end
 %Now we calculate the path required to get to the frontier
-goalf=v;
+goalf=v;%We need to make sure v is the right "last" frontier we located
 path = zeros(1,dist(v));
 pathL = repmat(' ',1,dist(v));
 path(dist(v)) = prev(v);
@@ -101,30 +158,32 @@ for k = dist(v)-1:-1:1
     path(k) = prev(path(k+1));
     pathL(k) =prevL(path(k+1));
 end
-Q = [];
 goalbackmat=zeros(size(goalmat));
 goalbackmat(goalf)=1;
 goalbackmat=flipud(goalbackmat);
 goalf=find(goalbackmat); %finding location of goal frontier cell to be returned.
 end
 
-function levels=getLevels(Graph, frontiers)
+function levels=getLevels(frontiers)
 %%getLevels returns the amount of levels needed to expand the
 indFrontiers=find(frontiers);%Get the indices of the frontiers
-minFrontiers=min(frontiers);%Get indices of the minimums of frontiers
-
-for i=1:size(minFrontiers)
-    if minFrontiers(i)<=-1%If there is a frontier cell with a value of -1
+minFrontiers=min(frontiers);%Get minimum value of the frontiers
+levels=0;%Default levels to 0 because there may be no 
+for i=1:size(indFrontiers)
+    if minFrontiers>=0%No Frontier has a value
+        %This means that we can expand twice because there may be a frontier
+        %cell with a value of -3 in 2 levels which justifies the expansion.
+        levels=2;
+        break;
+    end
+    if indFrontiers(i)<=-1%If there is a frontier cell with a value of -1
         %We can expand the level by 2 to see if there is a frontier cell 
-        level=1;
+        levels=1;
     
     end
     
 end
-if size(minFrontiers)==0%No Frontier has a value <0
-    %This means that we can expand twice because there may be a frontier
-    %cell with a value of -3 in 2 levels which justifies the expansion.
-    level=2;
-end
+%We then wouldn't have to expand because there would be no
+
 end
 

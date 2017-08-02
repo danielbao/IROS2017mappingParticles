@@ -104,7 +104,9 @@ end
         while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_mod_star(G.update_map,roboloc,frontier_vec,valueMap); 
+            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
+            %DijkstraForBoundary_mod
+            %BFS_Expansion
             %The shortest path to a frontier cell is selected by expanding from particles
             %Now this uses the mod_star to select a path to the lowest cost
             %frontier cell; not necessarily the closestOne
@@ -258,9 +260,9 @@ end
         % To get values for other types of cells, we only need to change
         % it some other number for value
         valueMap = checkNeighbors(current_map, 3);
-%         disp(valueMap)
-%         drawcirc()
-%         disp(newline)
+        disp(flipud(valueMap))
+        drawcirc();
+        disp(newline)
 %       Code for checking checkNeighbors. It works now
     end
 %% checkNeighbors checks the neighbor of each cell for a certain value
@@ -270,24 +272,24 @@ end
         for i=1:m
             for j=1:n
                 if(Array(i,j)==4)% If it's a frontier
-                    if(i-1~=0 && j>0)% If the upper neighbor isn't out of bounds
+                    if(i-1~=0)% If the upper neighbor isn't out of bounds
                         if(Array(i-1,j)==value)% If that cell is a valued cell
-                            Neighbors(i-1,j)=Neighbors(i-1,j)-1;% Give it a value of -3
+                            Neighbors(i,j)=Neighbors(i,j)-1;% Lower its value
                         end
                     end
-                    if(i+1<=m && j>0)% If the lower neighbor isn't out of bounds
+                    if(i+1<=m)% If the lower neighbor isn't out of bounds
                         if(Array(i+1,j)==value)% If that cell is a valued cell
-                            Neighbors(i+1,j)=Neighbors(i+1,j)-1;
+                            Neighbors(i,j)=Neighbors(i,j)-1;
                         end
                     end
-                    if(i>0 && j-1~=0)% If the left neighbor isn't out of bounds
+                    if(j-1~=0)% If the left neighbor isn't out of bounds
                         if(Array(i,j-1)==value)% If that cell is a valued cell
-                            Neighbors(i,j-1)=Neighbors(i,j-1)-1;
+                            Neighbors(i,j)=Neighbors(i,j)-1;
                         end
                     end
-                    if(i>0 && j+1<=n)% If the right neighbor isn't out of bounds
+                    if(j+1<=n)% If the right neighbor isn't out of bounds
                         if(Array(i,j+1)==value)% If that cell is a valued cell
-                            Neighbors(i,j+1)=Neighbors(i,j+1)-1;
+                            Neighbors(i,j)=Neighbors(i,j)-1;
                         end
                     end
                 end
