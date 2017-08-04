@@ -13,8 +13,8 @@ function [pathL,goalf] = BFS_Expansion_AVM( Graph, source, goal, value )
 %Loop every level of expansion
 %   If it's a better frontier
 %       Break; compute path
-Graph=flipud(Graph);
-value=flipud(value);
+% Graph=flipud(Graph);
+% value=flipud(value);
 prevL = repmat('?',size(Graph));
 prev = -1*ones(size(Graph));
 path = []; %#ok<NASGU>
@@ -58,17 +58,17 @@ while lowvalflag==0%While there are free spaces to explore
                             k=k-1;
                         end
                     end
-                    prevL(v)=dirLetter(i);
-                    prev(v)=u;
+                    %                     prevL(v)=dirLetter(i);
+                    %                     prev(v)=u;
                     
                     if any(goal==v)%If there's a frontier
                         
-                        if value(v)<=-2 && level==0
+                        if value(v)<=-2 
                             lowvalflag=1;%lowvalflage allows us to skip
                             mincost=value(v);
                             bestfrontierloc=v;
                             %frontier evaluation and go to
-                            break;
+%                             break;
                         elseif value(v)< mincost
                             mincost=value(v);
                             if level==0
@@ -78,6 +78,9 @@ while lowvalflag==0%While there are free spaces to explore
                     end
                 end
             end
+        end
+        if lowvalflag==1
+            break;
         end
     end
     if lowvalflag==0
@@ -90,28 +93,34 @@ while lowvalflag==0%While there are free spaces to explore
             end
         elseif level==1
             if gracelvl==1
-                if mincost>=-1
-                    v=bestfrontierloc;
+                if value(v)<mincost-1
+                    bestfrontierloc=v;
+                    dist=dist-1;
+                else
+                    dist=dist-2;
                 end
-                dist=dist-1;
                 lowvalflag=1;
             end
         elseif level==2
-            if mincost>=-2
-                v=bestfrontierloc;
-                dist=dist-2;
+            if value(v)<mincost-2
+                bestfrontierloc=v;
+                dist=dist-1;
+            else
+                dist=dist-3;
             end
+            
             lowvalflag=1;
         end
         if mincost<=0
             level=level+1;
         end
-        
+        source=nextsource;
         
     end
 end
-[frontdist,goalr, prevL,prev]= pathcalc(Graph,PassSource,v);
-% %Now we calculate the path required to get to the frontier
+% end
+[frontdist,goalr, prevL,prev]= pathcalc(Graph,PassSource,bestfrontierloc);
+% % %Now we calculate the path required to get to the frontier
 path = zeros(1,frontdist);
 pathL = repmat(' ',1,frontdist);
 path(frontdist) = prev(goalr);
@@ -122,17 +131,17 @@ for l = frontdist-1:-1:1
 end
 pathL=fliplr(pathL);
 goalbackmat=zeros(size(goalmat));
-goalbackmat(v)=1;
+goalbackmat(bestfrontierloc)=1;
 goalbackmat=flipud(goalbackmat);
 goalf=find(goalbackmat); %finding location of goal frontier cell to be returned.
 end
 
 function [dist,goalf, prevL,prev]= pathcalc(Graph,RobotAddr,Frontier)
- Graph=flipud(Graph);
-Robomat=zeros(size(Graph));
-Robomat(RobotAddr)=1;
-Robomat=flipud(Robomat);
-RobotAddr=find(Robomat);
+%  Graph=flipud(Graph);
+% Robomat=zeros(size(Graph));
+% Robomat(RobotAddr)=1;
+% Robomat=flipud(Robomat);
+% RobotAddr=find(Robomat);
 source=Frontier;
 prevL = repmat('?',size(Graph));
 prev = -1*ones(size(Graph));
