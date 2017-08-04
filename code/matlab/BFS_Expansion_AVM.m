@@ -1,4 +1,4 @@
-function [pathL,goalf] = BFS_Expansion( Graph, source, goal, value )
+function [pathL,goalf] = BFS_Expansion_AVM( Graph, source, goal, value )
 %BFS_Expansion BFS of free spaces searching for frontier spaces along
 %levels
 %   Approach:
@@ -28,6 +28,7 @@ mincost=100000000000;
 level=0;
 lowvalflag=0;
 dist=0;
+PassSource=source;
 % Source node will be selected first from the indices
 while lowvalflag==0%While there are free spaces to explore
     %And there has been no minimum visited
@@ -36,7 +37,7 @@ while lowvalflag==0%While there are free spaces to explore
         -1,0; % up
         0,1;  % right
         1,0;];  % down
-    frontierFound=0;
+    
     k=0;
     %values for address evaluation
     while numel(source)>0%Logic might need help here
@@ -52,18 +53,20 @@ while lowvalflag==0%While there are free spaces to explore
                     if isempty(find(source==v))
                         k=k+1;
                         nextsource(k)=v;
-                     if numel(find(nextsource==v))>1
-                        nextsource(k)=[];
-                        k=k-1;
-                    end
+                        if numel(find(nextsource==v))>1
+                            nextsource(k)=[];
+                            k=k-1;
+                        end
                     end
                     prevL(v)=dirLetter(i);
                     prev(v)=u;
-                   
+                    
                     if any(goal==v)%If there's a frontier
-                        frontierFound=1;
+                        
                         if value(v)<=-2 && level==0
                             lowvalflag=1;%lowvalflage allows us to skip
+                            mincost=value(v);
+                            bestfrontierloc=v;
                             %frontier evaluation and go to
                             break;
                         elseif value(v)< mincost
@@ -101,31 +104,89 @@ while lowvalflag==0%While there are free spaces to explore
             lowvalflag=1;
         end
         if mincost<=0
-        level=level+1;
+            level=level+1;
         end
-        source=nextsource;
         
         
     end
-    
 end
-
-
-%Now we calculate the path required to get to the frontier
-goalf=v;
-path = zeros(1,dist);
-pathL = repmat(' ',1,dist);
-path(dist) = prev(v);
-pathL(dist) = prevL(v);
-for l = dist-1:-1:1
+[frontdist,goalr, prevL,prev]= pathcalc(Graph,PassSource,v);
+% %Now we calculate the path required to get to the frontier
+path = zeros(1,frontdist);
+pathL = repmat(' ',1,frontdist);
+path(frontdist) = prev(goalr);
+pathL(frontdist) = prevL(goalr);
+for l = frontdist-1:-1:1
     path(l) = prev(path(l+1));
     pathL(l) =prevL(path(l+1));
 end
-
+pathL=fliplr(pathL);
 goalbackmat=zeros(size(goalmat));
-goalbackmat(goalf)=1;
+goalbackmat(v)=1;
 goalbackmat=flipud(goalbackmat);
 goalf=find(goalbackmat); %finding location of goal frontier cell to be returned.
 end
 
-
+function [dist,goalf, prevL,prev]= pathcalc(Graph,RobotAddr,Frontier)
+ Graph=flipud(Graph);
+Robomat=zeros(size(Graph));
+Robomat(RobotAddr)=1;
+Robomat=flipud(Robomat);
+RobotAddr=find(Robomat);
+source=Frontier;
+prevL = repmat('?',size(Graph));
+prev = -1*ones(size(Graph));
+path = []; %#ok<NASGU>
+RobotFound=0;
+dist=0;
+dirs = [ 0,-1;% left
+    -1,0; % up
+    0,1;  % right
+    1,0;];  % down
+dirLetter = ['r','d','l','u'];
+while RobotFound==0%Logic might need help here
+    k=0;
+    while numel(source)>0%Logic might need help here
+        u=source(1);
+        source(1)=[];
+        [ui,uj] = ind2sub(size(Graph),u); % Get row column index of u
+        for i = 1:size(dirs,1)%For each direction
+            if dirs(i,1) + ui>=1 && dirs(i,2) +uj >=1 && dirs(i,1) +ui <= size(Graph,1) && dirs(i,2) +uj <= size(Graph,2)
+                v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
+                %We get the cell in the direction
+                if Graph(v) == 0 %only try to move if the vertex is 0
+                    if isempty(find(source==v))
+                        k=k+1;
+                        nextsource(k)=v;
+                        if numel(find(nextsource==v))>1
+                            nextsource(k)=[];
+                            k=k-1;
+                        end
+                    end
+                    prevL(v)=dirLetter(i);
+                    prev(v)=u;
+                    
+                    if any(RobotAddr==v)%If there's a frontier
+                        
+                        RobotFound=1;
+                        
+                        break;
+                    end
+                end
+            end
+        end
+    end
+    source=nextsource;
+    dist=dist+1;
+end
+goalf=v;
+% path = zeros(1,dist);
+% pathL = repmat(' ',1,dist);
+% path(dist) = prev(v);
+% pathL(dist) = prevL(v);
+% for l = dist-1:-1:1
+%     path(l) = prev(path(l+1));
+%     pathL(l) =prevL(path(l+1));
+% end
+% PathL=fliplr(PathL);
+end
