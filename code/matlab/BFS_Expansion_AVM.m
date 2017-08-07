@@ -28,9 +28,9 @@ mincost=100000000000;
 level=0;
 lowvalflag=0;
 dist=0;
-PassSource=source;
+PassSource=source;%Storage variable for source
 % Source node will be selected first from the indices
-while lowvalflag==0%While there are free spaces to explore
+while lowvalflag==0%While we haven't found a good frontier
     %And there has been no minimum visited
     %We make our direction matrix
     dirs = [ 0,-1;% left
@@ -40,38 +40,42 @@ while lowvalflag==0%While there are free spaces to explore
     
     k=0;
     %values for address evaluation
-    while numel(source)>0%Logic might need help here
-        u=source(1);
+    while numel(source)>0%Free space loop
+        u=source(1);%We take and remove the first source node
         source(1)=[];
-        dirLetter = ['l','u','r','d'];
         [ui,uj] = ind2sub(size(Graph),u); % Get row column index of u
         for i = 1:size(dirs,1)%For each direction
             if dirs(i,1) + ui>=1 && dirs(i,2) +uj >=1 && dirs(i,1) +ui <= size(Graph,1) && dirs(i,2) +uj <= size(Graph,2)
                 v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
-                %We get the cell in the direction
+                %We get the cell in the direction and make sure it's within
+                %the boundaries
                 if Graph(v) == 0 %only try to move if the vertex is 0
-                    if isempty(find(source==v))
-                        k=k+1;
-                        nextsource(k)=v;
-                        if numel(find(nextsource==v))>1
+                    if isempty(find(source==v))%If our explored free space
+                        %isn't a robot location
+                        k=k+1;%increment our new source indice
+                        nextsource(k)=v;%store v
+                        if numel(find(nextsource==v))>1%If there's more than
+                            %1 v we have stored we need to remove it for
+                            %optimization purposes
                             nextsource(k)=[];
-                            k=k-1;
+                            k=k-1;%We decrement for continuity
                         end
                     end
                     %                     prevL(v)=dirLetter(i);
                     %                     prev(v)=u;
                     
                     if any(goal==v)%If there's a frontier
-                        
-                        if value(v)<=-2 
+                        if value(v)<=-2%If it's the best frontier
                             lowvalflag=1;%lowvalflage allows us to skip
-                            mincost=value(v);
+                            mincost=value(v);%We found mincost, so we store it
                             bestfrontierloc=v;
                             %frontier evaluation and go to
 %                             break;
-                        elseif value(v)< mincost
-                            mincost=value(v);
-                            if level==0
+                        elseif value(v)< mincost%If a frontier has a lower value
+                            mincost=value(v);%We store it
+                            if level==0%If it's the lowest level, it's the "preferred"
+                                %frontier we want to go to because we're
+                                %still greedy in some sorts
                                 bestfrontierloc=v;
                             end
                         end
@@ -79,48 +83,60 @@ while lowvalflag==0%While there are free spaces to explore
                 end
             end
         end
-        if lowvalflag==1
+        if lowvalflag==1%If we found the best frontier we want to break out
+            %of the while loop.
             break;
         end
     end
-    if lowvalflag==0
-        dist=dist+1;
-        if level==0
-            if mincost==0
-                gracelvl=2;
-            elseif mincost==-1
+    if lowvalflag==0%If we didn't find a minimum
+        dist=dist+1;%Not sure what we do with dist, some sort of
+        %distance book-keeping
+        if level==0%If we're at our original level of exploration
+            if mincost==0%And we found no valuable frontiers
+                gracelvl=2;%We explore 2 more levels to maybe find a frontier
+                %with a value of -3
+            elseif mincost==-1%If we found a semi-valuable but not the best
+                %Frontier, we explore another level to possible find a
+                %frontier with value of -3
                 gracelvl=1;
             end
-        elseif level==1
-            if gracelvl==1
-                if value(v)<mincost-1
-                    bestfrontierloc=v;
-                    dist=dist-1;
+        elseif level==1%Our first level of exploration!
+            if gracelvl==1%If we need to explore one extra level
+                if value(v)<mincost-1%If our value is less than our minimum cost
+                    %plus the distance it took to reach it;aka it's a better frontier
+                    bestfrontierloc=v;%We store it in bestfrontierloc
+                    dist=dist-1;%Lower dist to reflect an estimate of total cost
                 else
-                    dist=dist-2;
+                    dist=dist-2;%I guess we give up?
                 end
-                lowvalflag=1;
+                lowvalflag=1;%Trigger lowval flag so we end the loop once 
+                %this level of exploration is finished
             end
-        elseif level==2
-            if value(v)<mincost-2
-                bestfrontierloc=v;
-                dist=dist-1;
+        elseif level==2%Second level of exploration
+            %Not sure why we're not checking for grace level;
+            if value(v)<mincost-2%If it's a better frontier
+                bestfrontierloc=v;%We store it!
+                dist=dist-1;%
             else
-                dist=dist-3;
+                dist=dist-3;%
             end
             
-            lowvalflag=1;
+            lowvalflag=1;%Trigger lowval flag so we end the loop once 
+            %this level of exploration is finished
         end
         if mincost<=0
-            level=level+1;
+            level=level+1;%
         end
-        source=nextsource;
+        source=nextsource;%We cycle into the sources we've just expanded to
         
     end
 end
 % end
 [frontdist,goalr, prevL,prev]= pathcalc(Graph,PassSource,bestfrontierloc);
 % % %Now we calculate the path required to get to the frontier
+%There seems to be a problem with the path calculated and how it's being
+%located; it may be with the flipud thing we do to all of the cells but I'm
+%not sure either
 path = zeros(1,frontdist);
 pathL = repmat(' ',1,frontdist);
 path(frontdist) = prev(goalr);
