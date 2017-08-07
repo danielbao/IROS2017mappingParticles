@@ -36,13 +36,14 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =21;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum = 13;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.playflag=1;%flag for user playing with keyboard inputs
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -94,7 +95,10 @@ for m=1:60%Beginning frames drawn
     makemymovie();
 end
 %End of initialization
-CF() %Closest Frontier mapping call
+if(G.playflag==0)
+    CF() %Closest Frontier mapping call
+end
+
 for m=1:60 %Ending frames result drawn
     makemymovie();
 end
@@ -104,7 +108,7 @@ end
         while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
+            moveSeq = BFS_Expansion_AVM(G.update_map,roboloc,frontier_vec, valueMap); 
             %DijkstraForBoundary_mod
             %BFS_Expansion
             %The shortest path to a frontier cell is selected by expanding from particles
@@ -260,9 +264,9 @@ end
         % To get values for other types of cells, we only need to change
         % it some other number for value
         valueMap = checkNeighbors(current_map, 3);
-        disp(flipud(valueMap))
-        drawcirc();
-        disp(newline)
+%         disp(flipud(valueMap))
+%         drawcirc();
+%         disp(newline)
 %       Code for checking checkNeighbors. It works now
     end
 %% checkNeighbors checks the neighbor of each cell for a certain value

@@ -150,7 +150,7 @@ elseif mapnum==12
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
         ]);
 elseif mapnum==13
-    blk=uint8([%2 loops, 47 blanks   
+    blk=uint8([%2 loops, 66 blanks   
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
         1 1 0 0 0 1 1 1 0 1 1 1 0 0 0 0 0 1;
         1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 1 0 1;

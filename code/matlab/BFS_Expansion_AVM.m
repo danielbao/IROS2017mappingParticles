@@ -14,20 +14,21 @@ function [pathL,goalf] = BFS_Expansion_AVM( Graph, source, goal, value )
 %   If it's a better frontier
 %       Break; compute path
 % Graph=flipud(Graph);
-% value=flipud(value);
+%  value=flipud(value);
 prevL = repmat('?',size(Graph));
 prev = -1*ones(size(Graph));
 path = []; %#ok<NASGU>
 pathL = [];
-goalmat=zeros(size(Graph));
-goalmat(goal)=1;% the goals are where it's 1
-goalmat=flipud(goalmat);
-goal=find(goalmat);% Get the indice after you flip the matrix
+% goalmat=zeros(size(Graph));
+% goalmat(goal)=1;% the goals are where it's 1
+% goalmat=flipud(goalmat);
+% goal=find(goalmat);% Get the indice after you flip the matrix
 % while Q is not empty:
 mincost=100000000000;
 level=0;
 lowvalflag=0;
-dist=0;
+dist=0;%Distance from the source node we have expanded from
+level_zero=0;%If a frontier has been found
 PassSource=source;%Storage variable for source
 % Source node will be selected first from the indices
 while lowvalflag==0%While we haven't found a good frontier
@@ -65,7 +66,8 @@ while lowvalflag==0%While we haven't found a good frontier
                     %                     prev(v)=u;
                     
                     if any(goal==v)%If there's a frontier
-                        if value(v)<=-2%If it's the best frontier
+                        level_zero=1;
+                        if value(v)<=-2 && level==0%If it's the best frontier
                             lowvalflag=1;%lowvalflage allows us to skip
                             mincost=value(v);%We found mincost, so we store it
                             bestfrontierloc=v;
@@ -83,14 +85,13 @@ while lowvalflag==0%While we haven't found a good frontier
                 end
             end
         end
+%         dist=dist+1;%Increase the distance counter after an expansion
         if lowvalflag==1%If we found the best frontier we want to break out
             %of the while loop.
             break;
         end
     end
-    if lowvalflag==0%If we didn't find a minimum
-        dist=dist+1;%Not sure what we do with dist, some sort of
-        %distance book-keeping
+    if lowvalflag==0&&level_zero==1%If we didn't find a minimum and we found a frontier
         if level==0%If we're at our original level of exploration
             if mincost==0%And we found no valuable frontiers
                 gracelvl=2;%We explore 2 more levels to maybe find a frontier
@@ -105,12 +106,12 @@ while lowvalflag==0%While we haven't found a good frontier
                 if value(v)<mincost-1%If our value is less than our minimum cost
                     %plus the distance it took to reach it;aka it's a better frontier
                     bestfrontierloc=v;%We store it in bestfrontierloc
-                    dist=dist-1;%Lower dist to reflect an estimate of total cost
-                else
-                    dist=dist-2;%I guess we give up?
+%                     dist=dist-1;%Lower dist to reflect an estimate of total cost
+               
                 end
                 lowvalflag=1;%Trigger lowval flag so we end the loop once 
                 %this level of exploration is finished
+               
             end
         elseif level==2%Second level of exploration
             %Not sure why we're not checking for grace level;
@@ -124,14 +125,12 @@ while lowvalflag==0%While we haven't found a good frontier
             lowvalflag=1;%Trigger lowval flag so we end the loop once 
             %this level of exploration is finished
         end
-        if mincost<=0
             level=level+1;%
-        end
-        source=nextsource;%We cycle into the sources we've just expanded to
+        
         
     end
+    source=nextsource;%We cycle into the sources we've just expanded to
 end
-% end
 [frontdist,goalr, prevL,prev]= pathcalc(Graph,PassSource,bestfrontierloc);
 % % %Now we calculate the path required to get to the frontier
 %There seems to be a problem with the path calculated and how it's being
@@ -146,7 +145,7 @@ for l = frontdist-1:-1:1
     pathL(l) =prevL(path(l+1));
 end
 pathL=fliplr(pathL);
-goalbackmat=zeros(size(goalmat));
+goalbackmat=zeros(size(Graph));
 goalbackmat(bestfrontierloc)=1;
 goalbackmat=flipud(goalbackmat);
 goalf=find(goalbackmat); %finding location of goal frontier cell to be returned.
@@ -171,7 +170,7 @@ dirs = [ 0,-1;% left
     -1,0; % up
     0,1;  % right
     1,0;];  % down
-dirLetter = ['r','d','l','u'];
+dirLetter = ['r','u','l','d'];
 while RobotFound==0%We stop when we find the robot
     k=0;
     while numel(source)>0%We still need to explore through all of the free
@@ -192,23 +191,24 @@ while RobotFound==0%We stop when we find the robot
                             k=k-1;
                         end
                     end
-                    prevL(v)=dirLetter(i);
-                    prev(v)=u;
-                    
-                    if any(RobotAddr==v)%If the robot is the node we explore
-                        
-                        RobotFound=1;%Robot flag gets triggered and we break!
-                        
+                    if prevL(v)=='?'
+                        prevL(v)=dirLetter(i);
+                        prev(v)=u;
+                    end
+                    if any(RobotAddr==v)%If the robot is the node we explore                
+                       bestroboloc=v;
+                        RobotFound=1;%Robot flag gets triggered and we break
                         break;
                     end
                 end
             end
         end
+        
     end
     source=nextsource;
     dist=dist+1;
 end
-goalf=v;
+goalf=bestroboloc;
 % path = zeros(1,dist);
 % pathL = repmat(' ',1,dist);
 % path(dist) = prev(v);
