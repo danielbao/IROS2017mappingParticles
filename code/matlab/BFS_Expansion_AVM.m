@@ -153,34 +153,38 @@ goalf=find(goalbackmat); %finding location of goal frontier cell to be returned.
 end
 
 function [dist,goalf, prevL,prev]= pathcalc(Graph,RobotAddr,Frontier)
-%  Graph=flipud(Graph);
+% The point of this code is to do a reverse BFS and find the robot from the
+% best frontier we located.
+% Graph=flipud(Graph);
 % Robomat=zeros(size(Graph));
 % Robomat(RobotAddr)=1;
 % Robomat=flipud(Robomat);
 % RobotAddr=find(Robomat);
-source=Frontier;
-prevL = repmat('?',size(Graph));
-prev = -1*ones(size(Graph));
+source=Frontier;%The frontier cell we start from
+prevL = repmat('?',size(Graph));%We make an array of move letters
+prev = -1*ones(size(Graph));%We instantiate this with negative ones, but it
+% stores the previous source we have come from
 path = []; %#ok<NASGU>
-RobotFound=0;
+RobotFound=0;%Flag for breaking out of the loops
 dist=0;
 dirs = [ 0,-1;% left
     -1,0; % up
     0,1;  % right
     1,0;];  % down
 dirLetter = ['r','d','l','u'];
-while RobotFound==0%Logic might need help here
+while RobotFound==0%We stop when we find the robot
     k=0;
-    while numel(source)>0%Logic might need help here
+    while numel(source)>0%We still need to explore through all of the free
+        % spaces and use the updated sources
         u=source(1);
         source(1)=[];
         [ui,uj] = ind2sub(size(Graph),u); % Get row column index of u
         for i = 1:size(dirs,1)%For each direction
             if dirs(i,1) + ui>=1 && dirs(i,2) +uj >=1 && dirs(i,1) +ui <= size(Graph,1) && dirs(i,2) +uj <= size(Graph,2)
                 v = sub2ind(size(Graph), dirs(i,1) + ui,  dirs(i,2) +uj);
-                %We get the cell in the direction
-                if Graph(v) == 0 %only try to move if the vertex is 0
-                    if isempty(find(source==v))
+                %We get the cell in the direction and check if it's valid
+                if Graph(v) == 0 %only try to move if the vertex is 0/free space
+                    if isempty(find(source==v))%We do the same thing from before
                         k=k+1;
                         nextsource(k)=v;
                         if numel(find(nextsource==v))>1
@@ -191,9 +195,9 @@ while RobotFound==0%Logic might need help here
                     prevL(v)=dirLetter(i);
                     prev(v)=u;
                     
-                    if any(RobotAddr==v)%If there's a frontier
+                    if any(RobotAddr==v)%If the robot is the node we explore
                         
-                        RobotFound=1;
+                        RobotFound=1;%Robot flag gets triggered and we break!
                         
                         break;
                     end
