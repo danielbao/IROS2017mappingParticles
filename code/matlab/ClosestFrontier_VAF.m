@@ -44,6 +44,24 @@ movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=1;%flag for user playing with keyboard inputs
+G.valueflag=1; %flag for user inputting values
+G.value=0; %variable for storing the value wanted to search for.
+% The keys for values
+% 0 is free space
+% 1 is unknown
+% 2 is robotvisited
+% 3 is obstacle
+% 4 is frontier
+if(G.valueflag==1)
+   prompt='What neighbor cell do you want to prioritize frontier exploration?';
+   prompt=[prompt newline '0 for free space' newline];
+   prompt=[prompt '1 from unknown cells' newline];
+   prompt=[prompt '2 for robotvisited' newline];
+   prompt=[prompt '3 for obstacle'];
+   prompt=[prompt newline '4 for frontier(no effect?)'];
+   temp_input=input(prompt)
+   G.value=temp_input;
+end
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -247,6 +265,8 @@ end
         frontier_exp(mapped_obstacles)=0;%All of our obstacles are refreshed to not be frontiers
         current_map(frontier_exp==1)=4; %4=frontier cells
         current_map(mapped_obstacles==1)=3; %3=obstacles
+        temp_map=current_map;
+        temp_map(G.free)=0;%0 equals free space;
         G.update_map=zeros(size(current_map));%reset update_map
         G.update_map(current_map==3)=1;%Reset our unknowns and obstacles to be unoccupied
         G.update_map(current_map==1)=1;%Reset undiscovered to be unoccupied
@@ -263,7 +283,8 @@ end
         % around it)
         % To get values for other types of cells, we only need to change
         % it some other number for value
-        valueMap = checkNeighbors(current_map, 3);
+        % We need to create a map with all of the free spaces
+        valueMap = checkNeighbors(temp_map, G.value);
 %         disp(flipud(valueMap))
 %         drawcirc();
 %         disp(newline)
