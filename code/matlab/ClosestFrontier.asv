@@ -1,6 +1,6 @@
-function [movecount,k,nodecount,init_config] = ClosestFrontier_VAF(k,itr,max_steps,config_flag,starting_config)
-% ClosestFrontier is a demonstration of mapping a completely connected and 
-% bounded 2D discrete grid space with k particles that move uniformly.
+function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,config_flag,starting_config)
+% ClosestFrontier is a demonstration of mapping a completely connected
+% and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
 % in length. All particles move in the same direction unless stopped by
 % black obstacles.
@@ -31,40 +31,23 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier_VAF(k,itr,max_ste
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
     k = 10;%Default num particles
-    itr=1;
-    config_flag=0; % Whether or not to use the previous configuration
-    max_steps=250; % Maximum number of steps we want to take
-    starting_config=0; % Inputted configuration
+    itr=1;% Iterations are used for the functionalized version
+    config_flag=0; % Whethe
+    max_steps=Inf;
+    starting_config=0;
+    
 end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum = 15;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =28;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
-G.playflag=0;%flag for user playing with keyboard inputs
-G.valueflag=0; %flag for user inputting values
-G.value=0; %variable for storing the value wanted to search for.
-% The keys for values
-% 0 is free space
-% 1 is unknown
-% 2 is robotvisited
-% 3 is obstacle
-% 4 is frontier
-if(G.valueflag==1)
-   prompt='What neighbor cell do you want to prioritize frontier exploration?';
-   prompt=[prompt newline '0 for free space' newline];
-   prompt=[prompt '1 from unknown cells' newline];
-   prompt=[prompt '2 for robotvisited' newline];
-   prompt=[prompt '3 for obstacle'];
-   prompt=[prompt newline '4 for frontier(no effect?)'];
-   temp_input=input(prompt)
-   G.value=temp_input;
-end
+max_steps=250;
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -91,17 +74,19 @@ G.colormap = [ 1,1,1; %Empty=white  0
     0,0,0;%obstacle=black 3
     0,0,1;%boundary cells/frontier=blue 4
     ];
+if config_flag==1
+    G.robvec=starting_config;
+else
+    randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+    G.robvec(randRobots(k+1:end))=0; % locations of the k robots
+end
 
-randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-G.robvec(randRobots(k+1:end))=0; % locations of the k robots
-
+init_config=G.robvec; % We store the first locations (linear indices) of the robots
+% after they're randomized
 RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to build path in this map
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
-frontier_exp=zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
-valueMap=zeros(size(G.obstacle_pos)); %Map to update with the values of frontier cells
-                                      % for the weighted exploration and
-                                      % mapping
+frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
 updateMap() %Update the map with the information from all the seperate maps
 set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
 axis equal
@@ -116,25 +101,18 @@ for m=1:60%Beginning frames drawn
     makemymovie();
 end
 %End of initialization
-if(G.playflag==0)
-    CF() %Closest Frontier mapping call
-end
-
+CF() %Closest Frontier mapping call
 for m=1:60 %Ending frames result drawn
     makemymovie();
 end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
     function CF()
         iter=1;
-        while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
+        while(nnz(frontier_exp)>0&&movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = BFS_Expansion_AVM(G.update_map,roboloc,frontier_vec, valueMap); 
-            %DijkstraForBoundary_mod
-            %BFS_Expansion
+            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
             %The shortest path to a frontier cell is selected by expanding from particles
-            %Now this uses the mod_star to select a path to the lowest cost
-            %frontier cell; not necessarily the closestOne
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
@@ -261,69 +239,22 @@ end
         robIndex = find(G.robvec);%Get positions of robots again
         nodes(robIndex);
         current_map(RobotVisits==0)=1; %1=undiscovered, set it to undiscovered if there no robot has visited there
-        frontier_exp(current_map==2)=0;%Current_map is 2 when it has been visited by a robot;
-                                        %therefore it isn't a frontier
-        map_expected(current_map~=1)=0;%If current map is a robot, then there must be free
+        frontier_exp(current_map==2)=0;%Current_map is 2 when it has been visited; therefore it isn't a frontier
+        map_expected(current_map~=1)=0;%If current map is not visited, then there must be nothing expected there
         mapped_obstacles = mapped_obstacles | map_expected;%OR the expected and mapped obstacles to update obstacles
-        frontier_exp(mapped_obstacles)=0;%All of our obstacles are refreshed to not be frontiers
+        frontier_exp(mapped_obstacles)=0;%all of our obstacles are refreshed to not be frontiers
         current_map(frontier_exp==1)=4; %4=frontier cells
         current_map(mapped_obstacles==1)=3; %3=obstacles
-        temp_map=current_map;
-        temp_map(G.free)=0;%0 equals free space;
         G.update_map=zeros(size(current_map));%reset update_map
-        G.update_map(current_map==3)=1;%Reset our unknowns and obstacles to be unoccupied
-        G.update_map(current_map==1)=1;%Reset undiscovered to be unoccupied
-        G.boundvec=find(current_map==4);%Set boundaries to be frontiers
-        G.roboloc=find(current_map==2);%Set robot locations to where they have visited
+        G.update_map(current_map==3)=1;%Reset our unknowns and obstacles to be undiscovered
+        G.update_map(current_map==1)=1;%Reset undiscovered to be undiscovered
+        G.boundvec=find(current_map== 4);%Set boundaries to be frontiers
+        G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
         if G.drawflag==1
             G.axis=imagesc(current_map); %Show map that updates as robots explore
         end
-        % Strategy for the Value Map
-        % Loop through current_map; If there is a 3 (obstacle) next to a
-        % 4(frontier), we give it a value of -(how many of frontier cells
-        % around it)
-        % To get values for other types of cells, we only need to change
-        % it some other number for value
-        % We need to create a map with all of the free spaces
-        valueMap = checkNeighbors(temp_map, G.value);
-%         disp(flipud(valueMap))
-%         drawcirc();
-%         disp(newline)
-%       Code for checking checkNeighbors. It works now
-    end
-%% checkNeighbors checks the neighbor of each cell for a certain value
-    function Neighbors=checkNeighbors(Array, value)
-        Neighbors=zeros(size(Array));
-        [m,n]=size(Array);
-        for i=1:m
-            for j=1:n
-                if(Array(i,j)==4)% If it's a frontier
-                    if(i-1~=0)% If the upper neighbor isn't out of bounds
-                        if(Array(i-1,j)==value)% If that cell is a valued cell
-                            Neighbors(i,j)=Neighbors(i,j)-1;% Lower its value
-                        end
-                    end
-                    if(i+1<=m)% If the lower neighbor isn't out of bounds
-                        if(Array(i+1,j)==value)% If that cell is a valued cell
-                            Neighbors(i,j)=Neighbors(i,j)-1;
-                        end
-                    end
-                    if(j-1~=0)% If the left neighbor isn't out of bounds
-                        if(Array(i,j-1)==value)% If that cell is a valued cell
-                            Neighbors(i,j)=Neighbors(i,j)-1;
-                        end
-                    end
-                    if(j+1<=n)% If the right neighbor isn't out of bounds
-                        if(Array(i,j+1)==value)% If that cell is a valued cell
-                            Neighbors(i,j)=Neighbors(i,j)-1;
-                        end
-                    end
-                end
-            end
-        end
-        
     end
 %% updateTitle updates title when called
     function updateTitle()
@@ -342,13 +273,12 @@ end
         %is a robot at free(i).
         blk = blockMaps(mapnum); %Function returns the binary map specified by mapnum
         free = find(blk==0); %Free spaces are where the obstacles are 0
-        robvec = ones(size(free)); % Robots can be randomized in the free space
+        robvec = ones(size(free)); %Put a robot in every free space
         [ri,ci] = find(blk==0);
         G.ri=ri;
         G.ci=ci;
         Moves = repmat( (1:numel(free))',1,4); %Repeat free four times across
-                                               %Represents the move
-                                               %possibilities
+                                               %Represents 4 
         world = -blk;
         world(free) = 1:numel(free);%Assign a vector to world at location of free to
         %Represent each possible move at free space
@@ -365,7 +295,7 @@ end
                 Moves(i,3) = world(r+1,c);%Store possible down move in Moves from world's down cell
             end
             if blk(r-1,c) == 0%Move up
-                Moves(i,4) = world(r-1,c);%Store posible up move in Moves from world's up cell
+                Moves(i,4) = world(r-1,c);%Store posible up move in Moves from world's down cell
             end
         end
         

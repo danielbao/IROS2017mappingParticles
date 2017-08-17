@@ -1,4 +1,4 @@
-function [movecount,k,nodecount] = ClosestFrontier(k,itr)
+function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,config_flag,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -31,18 +31,23 @@ function [movecount,k,nodecount] = ClosestFrontier(k,itr)
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
     k = 10;%Default num particles
-    itr=1;
+    itr=1;% Iterations are used for the functionalized version
+    config_flag=0; % Whether or not to use the previous configuration
+    max_steps=250; % Maximum number of steps we want to take
+    starting_config=0; % Inputted configuration
+    
 end
 G.fig = figure(1);
-set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
+set(gcf,'Renderer','painter');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =13;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =12;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
+max_steps=250;
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -69,10 +74,15 @@ G.colormap = [ 1,1,1; %Empty=white  0
     0,0,0;%obstacle=black 3
     0,0,1;%boundary cells/frontier=blue 4
     ];
+if config_flag==1
+    G.robvec=starting_config;
+else
+    randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+    G.robvec(randRobots(k+1:end))=0; % locations of the k robots
+end
 
-randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-G.robvec(randRobots(k+1:end))=0; % locations of the k robots
-
+init_config=G.robvec; % We store the first locations (linear indices) of the robots
+% after they're randomized
 RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to build path in this map
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
@@ -98,7 +108,7 @@ end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
     function CF()
         iter=1;
-        while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
+        while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
             moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
