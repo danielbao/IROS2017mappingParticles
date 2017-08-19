@@ -13,7 +13,7 @@ temprun=struct;
 
 for i=100:100:5800 %set the range of values for the function. For now it will run for no of robots=500,2000
     for j=1:20 %set the numner of iterations for the function
-        [temprun(i,j).movecount,temprun(i,j).k,temprun(i,j).nodecount] = ClosestFrontier_VAF(i,j); %specify which function is used. Currently it will run the random mapping
+        [temprun(i,j).movecount,temprun(i,j).k,temprun(i,j).nodecount] = ClosestFrontier_VAF(i,j,250,0,0); %specify which function is used. Currently it will run the random mapping
         save('Mapping_5000_VAF_temp.mat','temprun'); %We save this to get nodecount plot later
     end
     run(i).movecount=mean([temprun(i,:).movecount]);
