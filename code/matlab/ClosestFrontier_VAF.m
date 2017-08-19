@@ -39,7 +39,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum = 15;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum = 28;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -92,9 +92,15 @@ G.colormap = [ 1,1,1; %Empty=white  0
     0,0,1;%boundary cells/frontier=blue 4
     ];
 
-randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-G.robvec(randRobots(k+1:end))=0; % locations of the k robots
+if config_flag==1
+    G.robvec=starting_config;
+else
+    randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+    G.robvec(randRobots(k+1:end))=0; % locations of the k robots
+end
 
+init_config=G.robvec; % We store the first locations (linear indices) of the robots
+% after they're randomized
 RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to build path in this map
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
@@ -126,7 +132,7 @@ end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
     function CF()
         iter=1;
-        while(nnz(frontier_exp)>0)%While there are still unknowns, DFS begins
+        while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
             moveSeq = BFS_Expansion_AVM(G.update_map,roboloc,frontier_vec, valueMap); 

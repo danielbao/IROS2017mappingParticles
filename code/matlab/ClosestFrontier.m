@@ -40,14 +40,13 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','painter');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =12;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =28;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
-max_steps=250;
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
