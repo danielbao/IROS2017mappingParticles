@@ -30,7 +30,7 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier_VAF(k,itr,max_ste
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin Initialization
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
-    k = 10;%Default num particles
+    k = 1000;%Default num particles
     itr=1;
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
