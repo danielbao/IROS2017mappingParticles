@@ -47,6 +47,8 @@ G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.playflag=1;%flag for user playing with keyboard inputs
+G.valueflag=0; %flag for user inputting values
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -63,7 +65,12 @@ open(writerObj);
         end
     end
 %% Setup map, matrices and initiate mapping
+% Define joystick ID (if only using 1 joystick, this will likely be '1')
+ID = 1;
+% Create joystick variable
+joy=vrjoystick(ID);
 [G.obstacle_pos,G.free,G.robvec,G.Moves] = SetupWorld(G.mapnum);
+t = timer('ExecutionMode', 'fixedRate', 'Period', 0.01, 'TimerFcn', @t_Callback);
 set(G.fig ,'KeyPressFcn',@keyhandler,'Name','Massive Control','color','w')
 G.maxX = size(G.obstacle_pos,2);%x-dimension of obstacles in number of columns
 G.maxY = size(G.obstacle_pos,1);%y-dimension of obstacles in number of rows
@@ -100,7 +107,10 @@ for m=1:60%Beginning frames drawn
     makemymovie();
 end
 %End of initialization
-CF() %Closest Frontier mapping call
+if(G.playflag==0)
+    CF() %Closest Frontier mapping call
+end
+%Closest Frontier mapping call
 for m=1:60 %Ending frames result drawn
     makemymovie();
 end
@@ -170,15 +180,61 @@ end
 
 %% keyhandler takes input from user
     function keyhandler(src,evnt) %#ok<INUSL>
+        
         if strcmp(evnt.Key,'s')%s is the cancel key
             imwrite(flipud(get(G.axis,'CData')+1), G.colormap, '../../pictures/png/MatrixPermutePic.png');
         else
             moveto(evnt.Key)
         end
     end
+    function t_Callback(~,~)
+        try
+            mv=0;%Reset move selector
+            Y=axis(joy, 1);     % X-axis is joystick axis 1
+            X=axis(joy, 2);     % Y-axis is joystick axis 2
+            if Y<=-0.1
+                mv = 1;
+            elseif Y>=0.1
+                mv = 2;
+            elseif X<=-0.1
+                mv = 3;
+            elseif X>=0.1
+                mv = 4;
+            end
+            if mv>0%Do the move
+                map_expected=G.im2;%im2 is the local particle location matrix
+                G.movecount = G.movecount+1;%Increment movecount everytime a move is applied
+                % map_expected has 1 where robot is expected to be
+                if mv==1
+                    map_expected = circshift(map_expected,[0 -1]);%shift map left by 1
+                elseif mv==2
+                    map_expected = circshift(map_expected,[0 1]);%shift map right by 1
+                elseif mv==3
+                    map_expected = circshift(map_expected,[1 0]);%shift map down by 1
+                else
+                    map_expected = circshift(map_expected,[-1 0]);%shift map up by 1
+                end
+                %G.movecount = G.movecount+1;commented out because it is a
+                %double movecount
+                G.robvec = applyMove(mv, G.robvec);%Move robots and put it in actual positions
+                updateMap()
+                updateTitle()
+                if G.drawflag==1
+                    drawcirc()%Draw each robot again
+                end
+                drawnow
+                if G.videoflag==1
+                    makemymovie()
+                end
+            end
+        catch
+            joy = vrjoystick(1);
+            return;
+        end
+    end
 %% moveto(key) calls apply move and updates the map
     function moveto(key)
-        G.movecount = G.movecount+1;%Increment movecount everytime a move is applied
+
         mv=0;%Reset move selector
         if strcmp(key,'leftarrow') || strcmp(key,'l')|| strcmp(key,'1')  %-x
             mv = 1;
@@ -191,7 +247,7 @@ end
         end
         if mv>0%Do the move
             map_expected=G.im2;%im2 is the local particle location matrix
-            
+            G.movecount = G.movecount+1;%Increment movecount everytime a move is applied
             % map_expected has 1 where robot is expected to be
             if mv==1
                 map_expected = circshift(map_expected,[0 -1]);%shift map left by 1
