@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,config_flag,starting_config)
+function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,config_flag,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -15,11 +15,18 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,c
 % There are 33 maps to choose from: 1 through 22 being
 % created through matrices and 24 through 33 being image read maps.
 % Map specifications can be found in blockMaps.m and selected by G.mapnum
+% This program was modified with randomized species of each particle that
+% behave differently toward the global command.
+% The purpose of such a particle is to emulate Janus particles with
+% randomized polarization such that their movements are not all uniform
+% from the global frame of reference but within their own.
 % 
 %
-%
-%
-%
+% Species used: 
+% Species 1-Normal Species; obeys commands perfectly
+% Species 2-CCW 90 species; goes 90 degrees CCW
+% Species 3-Anti Species; goes 180 degrees in the other direction
+% Species 4-CW 90 species; goes 90 degrees CW
 %  Authors:
 %  Aaron T. Becker
 %     atbecker@uh.edu
@@ -49,6 +56,7 @@ G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
+G.initflag=1; %flag for first round of initiation; used in updateMap()
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -98,13 +106,12 @@ RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to bui
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
-updateMap() %Update the map with the information from all the seperate maps
-set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
-G.h=scatter(G.robscaty,G.robscatx,'r','filled');
 axis equal
 axis tight
-updateTitle() %Update the values displayed in the title
+set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
 hold on
+updateMap() %Update the map with the information from all the seperate maps
+updateTitle() %Update the values displayed in the title
 
 if G.drawflag==1
     drawcirc()
@@ -121,6 +128,7 @@ for m=1:60 %Ending frames result drawn
     makemymovie();
 end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
+%% This needs to be changed and adjusted for 
     function CF()
         iter=1;
         while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
@@ -287,15 +295,14 @@ end
     end
 %% Drawing scatter circles in the location of particles
     function drawcirc()
-        h=scatter(G.robscaty,G.robscatx,'r','filled');%create a new variable with the scatterplot
-        currentunits = get(gca,'Units');%use current Units
-        set(gca, 'Units', 'Points');%graph the current Units and Points
-        axpos = get(gca,'Position');
-        set(gca, 'Units', currentunits);
-        markerWidth = .8/diff(xlim)*axpos(3); % Calculate Marker width in points
-        set(h,'SizeData', markerWidth^2)%graph with data and squared width
+%         set(G.h,'XData',G.robscaty,'YData',G.robscatx);%create a new variable with the scatterplot
+%         currentunits = get(gca,'Units');%use current Units
+%         axpos = get(gca,'Position');
+%         set(G.h, 'Units', currentunits);
+%         markerWidth = .5/diff(xlim)*axpos(3); % Calculate Marker width in points
+%         set(G.h,'SizeData', markerWidth^2)%graph with data and squared width
+%         uistack(G.h,'top');
         drawnow
-
     end
 %% Updating the map
     function updateMap()
@@ -320,9 +327,35 @@ end
         G.boundvec=find(current_map== 4);%Set boundaries to be frontiers
         G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
+        [G.Frontx,G.Fronty]=find(current_map== 4);
+        %Frontier locations
+        [G.Obsx,G.Obsy]=find(current_map== 3);
+        %Obstacle locations
+        [G.Unkx,G.Unky]=find(current_map== 1);
         colormap(G.colormap(unique(current_map)+1,:));
+        if G.initflag==1
+           %This initialization measure allows us to set the scatterplots for each
+           %data set (obstacles, robot locations)
+           %Previously refreshing images may be a resource hog; hope
+           %fully this approach works better.
+            G.i=scatter(G.Fronty,G.Frontx,'b','s','filled'); 
+            %Scatterplot for frontier locations
+            G.h=scatter(G.robscaty,G.robscatx,'r','filled'); %Initialize the locations of each particle
+            %This is the scatterplot for the robot locations
+            G.j=scatter(G.Obsy,G.Obsx,'black','s','filled');
+            %Scatterplot for obstacle locations
+            G.k=scatter(G.Unky,G.Unkx,'s','filled','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerFaceColor',[0.5 0.5 0.5],'LineWidth',1.01);
+            %Scatterplot for unknown locations
+            G.initflag=0;
+            %Reset the flag b/c this is only needed once
+        end
         if G.drawflag==1
-            G.axis=imagesc(current_map); %Show map that updates as robots explore
+%             G.axis=imagesc(current_map); %Show map that updates as robots explore
+            set(G.h,'XData',G.robscaty,'Ydata',G.robscatx);
+            set(G.i,'XData',G.Fronty,'Ydata',G.Frontx);
+            set(G.j,'XData',G.Obsy,'Ydata',G.Obsx);
+            set(G.k,'XData',G.Unky,'Ydata',G.Unkx);
+%             uistack(G.h,'top');
         end
     end
 %% updateTitle updates title when called
