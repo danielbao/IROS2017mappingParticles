@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,config_flag,starting_config)
+function [movecount,k,nodecount,init_config] = ClosestFrontier_scattermod(k,itr,max_steps,config_flag,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -15,7 +15,7 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,c
 % There are 33 maps to choose from: 1 through 22 being
 % created through matrices and 24 through 33 being image read maps.
 % Map specifications can be found in blockMaps.m and selected by G.mapnum
-% 
+% This is optimized for faster performance using better graphic settings
 %
 %
 %
@@ -30,7 +30,7 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier(k,itr,max_steps,c
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin Initialization
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
-    k = 10;%Default num particles
+    k = 5;%Default num particles
     itr=1;% Iterations are used for the functionalized version
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
@@ -40,7 +40,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =3;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =1;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -49,6 +49,8 @@ G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
+G.initflag=1; %flag for first round of initiation; used in updateMap()
+
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
@@ -98,17 +100,12 @@ RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to bui
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
-updateMap() %Update the map with the information from all the seperate maps
-set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
-G.h=scatter(G.robscaty,G.robscatx,'r','filled');
 axis equal
 axis tight
-updateTitle() %Update the values displayed in the title
+set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','off');%Create graph without all of the axes
 hold on
-
-if G.drawflag==1
-    drawcirc()
-end
+updateMap() %Update the map with the information from all the seperate maps
+updateTitle() %Update the values displayed in the title
 for m=1:60%Beginning frames drawn
     makemymovie();
 end
@@ -161,7 +158,7 @@ end
 %% Apply move called by moveto to all the robots
     function rvec2 = applyMove(mv, rvecIn)%mv=move selected; rvecIn=robots locations
         rvec2 = zeros(size(rvecIn));%Result matrix to store moved robots
-        if mv==1 || mv==4 %Collision check for left and up
+        if mv==1 || mv==4 %Collision check for left and down
             for ni = 1:numel(rvecIn)%G.Moves(ni,mv) returns 1 if there is a robot after the movement mv
                 if rvecIn(G.Moves(ni,mv)) ~= 1%If a robot isn't there at left or down
                     rvec2(G.Moves(ni,mv)) = rvecIn(ni);%Set result to new location
@@ -233,15 +230,9 @@ end
             else
                 map_expected = circshift(map_expected,[-1 0]);%shift map up by 1
             end
-            %G.movecount = G.movecount+1;commented out because it is a
-            %double movecount
             G.robvec = applyMove(mv, G.robvec);%Move robots and put it in actual positions
             updateMap()
             updateTitle()
-            if G.drawflag==1
-                drawcirc()%Draw each robot again
-            end
-            drawnow
             if G.videoflag==1
                 makemymovie()
             end
@@ -260,43 +251,10 @@ end
             mv = 4;
         end
         if mv>0%Do the move
-            map_expected=G.im2;%im2 is the local particle location matrix
-            G.movecount = G.movecount+1;%Increment movecount everytime a move is applied
-            % map_expected has 1 where robot is expected to be
-            if mv==1
-                map_expected = circshift(map_expected,[0 -1]);%shift map left by 1
-            elseif mv==2
-                map_expected = circshift(map_expected,[0 1]);%shift map right by 1
-            elseif mv==3
-                map_expected = circshift(map_expected,[1 0]);%shift map down by 1
-            else
-                map_expected = circshift(map_expected,[-1 0]);%shift map up by 1
-            end
-            %G.movecount = G.movecount+1;commented out because it is a
-            %double movecount
-            G.robvec = applyMove(mv, G.robvec);%Move robots and put it in actual positions
-            updateMap()
-            updateTitle()
-            if G.drawflag==1
-                drawcirc()%Draw each robot again
-            end
-            if G.videoflag==1
-                makemymovie()
-            end
+            movetomv(mv);
         end
     end
-%% Drawing scatter circles in the location of particles
-    function drawcirc()
-        h=scatter(G.robscaty,G.robscatx,'r','filled');%create a new variable with the scatterplot
-        currentunits = get(gca,'Units');%use current Units
-        set(gca, 'Units', 'Points');%graph the current Units and Points
-        axpos = get(gca,'Position');
-        set(gca, 'Units', currentunits);
-        markerWidth = .8/diff(xlim)*axpos(3); % Calculate Marker width in points
-        set(h,'SizeData', markerWidth^2)%graph with data and squared width
-        drawnow
 
-    end
 %% Updating the map
     function updateMap()
         current_map = ones(size(G.obstacle_pos)); %1=undiscovered
@@ -321,8 +279,34 @@ end
         G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
+        [G.Frontx,G.Fronty]=find(current_map== 4);
+        %Frontier locations
+        [G.Obsx,G.Obsy]=find(current_map== 3);
+        %Obstacle locations
+        [G.Unkx,G.Unky]=find(current_map== 1);
+
+        if G.initflag==1
+            G.h=scatter(G.robscaty,G.robscatx,'o','r','filled');
+            G.i=scatter(G.Fronty,G.Frontx,'s','b','filled');
+            G.j=scatter(G.Obsy,G.Obsx,'s','k','filled');
+            %Scatterplot for obstacle locations
+            G.k=scatter(G.Unky,G.Unkx,'s','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5]);
+            %Scatterplot for unknown locations
+            G.initflag=0;
+        end
         if G.drawflag==1
-            G.axis=imagesc(current_map); %Show map that updates as robots explore
+            currentunits = get(gca,'Units');
+            set(gca,'Units','Points');%The points conversion allow for window
+            %resizing issues to get solved every draw
+            axpos = get(gca,'Position');
+            set(gca,'Units', currentunits);
+            markerWidth = .8/diff(xlim)*axpos(3); % Calculate Marker width in points
+%             markerWidth = 10*figurepos(3)/1368; % Calculate Marker width in points
+            set(G.h,'XData',G.robscaty,'YData',G.robscatx,'SizeData',0.8*markerWidth^2);
+            set(G.i,'XData',G.Fronty,'Ydata',G.Frontx,'SizeData',1.1*markerWidth^2);
+            set(G.j,'XData',G.Obsy,'Ydata',G.Obsx,'SizeData',1.1*markerWidth^2);
+            set(G.k,'XData',G.Unky,'Ydata',G.Unkx,'SizeData',1.1*markerWidth^2);
+            drawnow;
         end
     end
 %% updateTitle updates title when called
@@ -332,7 +316,8 @@ end
         else
             FC=' frontier cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells'])
+        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells']);
+%         set(thetitle,'Position',get(thetitle,'Position')+[0 diff(ylim)*0.1 0]);
     end
 %% SetupWorld setups map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)

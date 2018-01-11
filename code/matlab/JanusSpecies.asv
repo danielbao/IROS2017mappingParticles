@@ -37,7 +37,7 @@ function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,conf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin Initialization
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
-    k = 100;%Default num particles
+    k = 10;%Default num particles
     itr=1;% Iterations are used for the functionalized version
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
@@ -47,7 +47,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =27;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =2% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -98,7 +98,13 @@ if config_flag==1%For using the same configurations as before
     G.robvec=starting_config;
 else
     randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-%% Distribution of robots code
+    %Since G.robvec is originally all 1s, we remove (freespace-k) robots from the list
+    %to determine which ones get to stay. Kinda arbitrary but it works!
+%     G.robvec(randRobots(k+1:end))=0; % locations of the k robots
+    %Code here is to give each robot a species type that doesn't change 
+    %after each move
+    %Approach: subdivide the random permutation equally; That's all that's
+    %really needed!
     G.type1loc=zeros(size(G.robvec));
     G.type2loc=zeros(size(G.robvec));
     G.type3loc=zeros(size(G.robvec));
@@ -107,10 +113,6 @@ else
     G.type2loc(randRobots(ceil(k/4):ceil(k/2)-1))=1;
     G.type3loc(randRobots(ceil(k/2):ceil(3*k/4)-1))=1;
     G.type4loc(randRobots(ceil(3*k/4):k))=1;
-%     G.type4loc(randRobots(1:round(k/2)-1))=1;
-%     G.type1loc(randRobots(round(k/2):k))=1;
-    %having all 4 species has some quirks. Try each one out individually
-    %instead
     %4 species locations initialized!!
 end
 
@@ -130,8 +132,7 @@ set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Creat
 hold on %This us reqired for proper drawing of the scatter plots; Turning it off will result in deleted plots
 updateMap() %Update the map with the information from all the seperate maps
 updateTitle() %Update the values displayed in the title
-ys=ylim;
-ylim([ys(1) ys(2)+0.5]);
+
 for m=1:60%Beginning frames drawn
     makemymovie();
 end
@@ -213,11 +214,21 @@ end
         %2-right
         %3-up
         %4-down?
+        %This method is kinda unique if you consider how it works
+        %rvec1In etc are all of the free spaces, with having a 1 at that
+        %locations meaning that there is a robot there
+        %We go through all of the stuff in rvec1In regardless if it is a
+        %robot or not (kinda redundant checking imo but it works atm) but
+        %G.Moves works for all free spaces as well which is what we care
+        %about
         %G.Moves returns the index of the free space which would be the
         %result of that move
-        %The issue is that sometimes the movements allow the robots to go
-        %through the wall or overlap!!
-        %Solut
+        %The first line checks if there is another type 1 robot at that
+        %location after a check for a free space; If not we go there!
+        %To-do:
+        %transform move for each type!
+        %do the check with rvec1In and every other one! It might require a
+        %lot of fiddling
         %We prioritize type 1 movements; they go first;
         if mv==1 || mv==4 %Collision check for left and down
             for ni = 1:numel(rvec1In)%G.Moves(ni,mv) returns 1 if there is a free space after the movement mv
@@ -247,7 +258,7 @@ end
         %type 2 movement check
         if mv2==1 || mv2==4 %Collision check for left and down
             for ni = 1:numel(rvec2In)%G.Moves(ni,mv) returns 1 if there is a free space after the movement mv
-                if rvec1Out(G.Moves(ni,mv2)) == 0 && rvec2In(G.Moves(ni,mv2)) == 0 && rvec3In(G.Moves(ni,mv2)) == 0 && rvec4In(G.Moves(ni,mv2)) == 0
+                if rvec1In(G.Moves(ni,mv2)) == 0 && rvec2In(G.Moves(ni,mv2)) == 0 && rvec3In(G.Moves(ni,mv2)) == 0 && rvec4In(G.Moves(ni,mv2)) == 0
                     %If there isn't a species of type 1,2,3, or 4 that will move to
                     %that location
                     rvec2Out(G.Moves(ni,mv2)) = rvec2In(ni);%Set result to new location
@@ -259,9 +270,9 @@ end
             end
         else %Collision check for down and right
             for ni=numel(rvec2In):-1:1%For the rest of the robots descending
-                if rvec1Out(G.Moves(ni,mv2)) == 0 && rvec2In(G.Moves(ni,mv2)) == 0 && rvec3In(G.Moves(ni,mv2)) == 0 && rvec4In(G.Moves(ni,mv2)) == 0
+                if rvec1In(G.Moves(ni,mv2)) == 0 && rvec2In(G.Moves(ni,mv2)) == 0 && rvec3In(G.Moves(ni,mv2)) == 0 && rvec4In(G.Moves(ni,mv2)) == 0
                     %Equivalent to ~=1
-                    rvec2Out(G.Moves(ni,mv2)) = rvec2In(ni);%Set result to new location
+                    rvec2Out(G.Moves(ni,mv)) = rvec2In(ni);%Set result to new location
                     rvec2In(ni)=0;%clear input for robot ni
                 else
                     rvec2Out(ni)=rvec2In(ni);%Update result with old location
@@ -272,7 +283,7 @@ end
         %type 3 collision check
         if mv3==1 || mv3==4 %Collision check for left and down
             for ni = 1:numel(rvec3In)%G.Moves(ni,mv) returns 1 if there is a free space after the movement mv
-                if rvec1Out(G.Moves(ni,mv3)) == 0 && rvec2Out(G.Moves(ni,mv3)) == 0 && rvec3In(G.Moves(ni,mv3)) == 0 && rvec4In(G.Moves(ni,mv3)) == 0
+                if rvec1In(G.Moves(ni,mv3)) == 0 && rvec2In(G.Moves(ni,mv3)) == 0 && rvec3In(G.Moves(ni,mv3)) == 0 && rvec4In(G.Moves(ni,mv3)) == 0
                     %If there isn't a species of type 1,2,3, or 4 that will move to
                     %that location
                     rvec3Out(G.Moves(ni,mv3)) = rvec3In(ni);%Set result to new location
@@ -284,7 +295,7 @@ end
             end
         else %Collision check for down and right
             for ni=numel(rvec3In):-1:1%For the rest of the robots descending
-                if rvec1Out(G.Moves(ni,mv3)) == 0 && rvec2Out(G.Moves(ni,mv3)) == 0 && rvec3In(G.Moves(ni,mv3)) == 0 && rvec4In(G.Moves(ni,mv3)) == 0
+                if rvec1In(G.Moves(ni,mv3)) == 0 && rvec2In(G.Moves(ni,mv3)) == 0 && rvec3In(G.Moves(ni,mv3)) == 0 && rvec4In(G.Moves(ni,mv3)) == 0
                     %Equivalent to ~=1
                     rvec3Out(G.Moves(ni,mv3)) = rvec3In(ni);%Set result to new location
                     rvec3In(ni)=0;%clear input for robot ni
@@ -297,7 +308,7 @@ end
         %type 4 collision check
         if mv4==1 || mv4==4 %Collision check for left and down
             for ni = 1:numel(rvec4In)%G.Moves(ni,mv) returns 1 if there is a free space after the movement mv
-                if rvec1Out(G.Moves(ni,mv4)) == 0 && rvec2Out(G.Moves(ni,mv4)) == 0 && rvec3Out(G.Moves(ni,mv4)) == 0 && rvec4In(G.Moves(ni,mv4)) == 0
+                if rvec1In(G.Moves(ni,mv4)) == 0 && rvec2In(G.Moves(ni,mv4)) == 0 && rvec3In(G.Moves(ni,mv4)) == 0 && rvec4In(G.Moves(ni,mv4)) == 0
                     %If there isn't a species of type 1,2,3, or 4 that will move to
                     %that location
                     rvec4Out(G.Moves(ni,mv4)) = rvec4In(ni);%Set result to new location
@@ -309,7 +320,7 @@ end
             end
         else %Collision check for down and right
             for ni=numel(rvec4In):-1:1%Starting from the end
-                if rvec1Out(G.Moves(ni,mv4)) == 0 && rvec2Out(G.Moves(ni,mv4)) == 0 && rvec3Out(G.Moves(ni,mv4)) == 0 && rvec4In(G.Moves(ni,mv4)) == 0
+                if rvec1In(G.Moves(ni,mv4)) == 0 && rvec2In(G.Moves(ni,mv4)) == 0 && rvec3In(G.Moves(ni,mv4)) == 0 && rvec4In(G.Moves(ni,mv4)) == 0
                     %Equivalent to ~=1
                     rvec4Out(G.Moves(ni,mv4)) = rvec4In(ni);%Set result to new location
                     rvec4In(ni)=0;%clear input for robot ni
@@ -397,15 +408,15 @@ end
                 map_3 = circshift(map_3,[0 -1]);
                 map_4 = circshift(map_4,[-1 0]);
             elseif mv==3
-                map_1 = circshift(map_1,[1 0]);%shift map up by 1
-                map_2 = circshift(map_2,[0 -1]);
-                map_3 = circshift(map_3,[-1 0]);
-                map_4 = circshift(map_4,[0 1]);
-            else
-                map_1 = circshift(map_1,[-1 0]);%shift map down by 1
+                map_1 = circshift(map_1,[1 0]);%shift map down by 1
                 map_2 = circshift(map_2,[0 1]);
-                map_3 = circshift(map_3,[1 0]);
+                map_3 = circshift(map_3,[-1 0]);
                 map_4 = circshift(map_4,[0 -1]);
+            else
+                map_1 = circshift(map_1,[-1 0]);%shift map up by 1
+                map_2 = circshift(map_2,[0 -1]);
+                map_3 = circshift(map_3,[1 0]);
+                map_4 = circshift(map_4,[0 1]);
             end
             
             [G.type1loc, G.type2loc, G.type3loc, G.type4loc]= applyMove(mv, G.type1loc, G.type2loc, G.type3loc, G.type4loc);%Move robots and put it in actual positions
@@ -543,8 +554,7 @@ end
         else
             FC=' frontier cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(k),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells']);
-        
+        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells'])
     end
 %% SetupWorld setups map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)

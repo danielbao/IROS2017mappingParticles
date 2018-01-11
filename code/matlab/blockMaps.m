@@ -11,15 +11,53 @@ function blk = blockMaps(mapnum)
 %     avm.rensol@gmail.com
 %  Edited by: Daniel Bao
 %     dzbao@uh.edu
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Quick list of maps available
+%1-14 blanks
+%2-18 blanks
+%3-25 blanks
+%4-loops with 37 blanks
+%5-2 loops, 24 blanks
+%6-2 loops, 26 blanks
+%7-2 loops, 27 blanks
+%8-2 loops, 28 blanks
+%9-2 loops, 29 blanks
+%10-2 loops, 20 blanks
+%11-2 loops 31 blanks
+%12-2 loops, 47 blanks
+%13-2 loops, 66 blanks
+%14-20 blanks; these are mazes not loops
+%15-21 blanks
+%16-22 blanks
+%17-23 blanks
+%18-19 blanks
+%19-15 blanks
+%20-16 blanks
+%21-17 blanks
+%22-linear map with 50 free spaces
+%23-rectangular map with 50 free spaces
+%24-%Completely connected and bounded
+%image of a small part of a leaf
+%25-%Completely connected and bounded
+%image of a medium part of a leaf
+%26- %Completely connected and bounded
+                                    %image of a whole leaf
+%27-%Completely connected and bounded
+                                         %leaf with 5000 free spaces
+%28-%Different leaf with 5000 spaces
+%29-%Different leaf with 500 spaces
+%30-%Different leaf
+%31-%3 level H tree with 1441 spaces
+%32-%3 level H tree with 1441 spaces
+%33-%4 level H tree with 24193 free spaces
+%%%%%%
 if mapnum == 1
     blk=uint8([%14 blanks
         1,1,1,1,1,1,1
-        1,0,1,1,1,1,1
-        1,0,1,1,1,1,1
-        1,0,0,1,1,1,1
-        1,0,1,1,1,1,1
-        1,1,1,1,1,1,1
+        1,0,1,1,0,1,1
+        1,0,1,1,0,1,1
+        1,0,0,0,0,1,1
+        1,0,0,0,0,1,1
+        1,1,1,1,0,0,1
         1,1,1,1,1,1,1]);
 elseif mapnum==2
     blk=uint8([%18 blanks
