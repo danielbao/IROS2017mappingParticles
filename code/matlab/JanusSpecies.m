@@ -23,10 +23,10 @@ function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,conf
 % 
 %
 % Species used: 
-% Species 1-Normal Species; obeys commands perfectly
-% Species 2-CCW 90 species; goes 90 degrees CCW
-% Species 3-Anti Species; goes 180 degrees in the other direction
-% Species 4-CW 90 species; goes 90 degrees CW
+% Species 1-Normal Species; obeys commands perfectly RED
+% Species 2-CCW 90 species; goes 90 degrees CCW GREEN
+% Species 3-Anti Species; goes 180 degrees in the other direction YELLOW
+% Species 4-CW 90 species; goes 90 degrees CW MAGENTA
 %  Authors:
 %  Aaron T. Becker
 %     atbecker@uh.edu
@@ -54,7 +54,7 @@ G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
-G.playflag=1;%flag for user playing with keyboard inputs
+G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
 G.initflag=1; %flag for first round of initiation; used in updateMap()
 clc
@@ -144,13 +144,16 @@ for m=1:60 %Ending frames result drawn
     makemymovie();
 end
 %% CF repeatedly moves particles to frontier cells until there are no more frontier cells left
-%% This needs to be changed and adjusted for 4 species
     function CF()
         iter=1;
         while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_Janus(G.update_map,roboloc,frontier_vec); 
+            temp1loc=G.ind1;
+            temp2loc=G.ind2;
+            temp3loc=G.ind3;
+            temp4loc=G.ind4;
+            moveSeq = BFS_Expansion_AVM_Janus(G.update_map,roboloc,temp1loc,temp2loc,temp3loc,temp4loc,frontier_vec); 
             %The shortest path to a frontier cell is selected by expanding from particles
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
@@ -472,7 +475,12 @@ end
         G.update_map(current_map==3)=1;%Reset our unknowns and obstacles to be undiscovered
         G.update_map(current_map==1)=1;%Reset undiscovered to be undiscovered
         G.boundvec=find(current_map== 4);%Set boundaries to be frontiers
-        G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
+        G.roboloc=find(current_map== 11 | current_map == 12 | current_map == 13 | current_map == 14);
+        G.ind1=find(current_map==11);
+        G.ind2=find(current_map==12);
+        G.ind3=find(current_map==13);
+        G.ind4=find(current_map==14);
+        %Set robot locations to where they're supposed to be
         [G.type1x,G.type1y]=find(current_map== 11);%Store scatter plot locations of the robot
         [G.type2x,G.type2y]=find(current_map== 12);
         [G.type3x,G.type3y]=find(current_map== 13);
