@@ -44,7 +44,7 @@ if nargin<1 %If no inputs are provided
     starting_config=0; % Inputted configuration
     
 end
-G.fig = figure(2);
+G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
 G.mapnum =27;% Identifier for map, 0-26; look at blockMaps to identify each map

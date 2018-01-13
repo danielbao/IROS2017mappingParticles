@@ -30,7 +30,7 @@ function [movecount,k,nodecount,init_config] = ClosestFrontier_scattermod(k,itr,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin Initialization
 global G; %Global variable used to store all of our matrices
 if nargin<1 %If no inputs are provided
-    k = 5;%Default num particles
+    k = 100;%Default num particles
     itr=1;% Iterations are used for the functionalized version
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
@@ -40,7 +40,7 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =1;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =27;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -104,8 +104,11 @@ axis equal
 axis tight
 set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','off');%Create graph without all of the axes
 hold on
+ys=ylim;
+ylim([ys(1) ys(2)+1]);
 updateMap() %Update the map with the information from all the seperate maps
 updateTitle() %Update the values displayed in the title
+
 for m=1:60%Beginning frames drawn
     makemymovie();
 end
