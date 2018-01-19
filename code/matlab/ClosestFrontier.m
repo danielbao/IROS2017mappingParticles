@@ -98,6 +98,7 @@ RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to bui
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
+explored_map= zeros(size(G.obstacle_pos));
 updateMap() %Update the map with the information from all the seperate maps
 set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
 G.h=scatter(G.robscaty,G.robscatx,'r','filled');
@@ -131,7 +132,7 @@ end
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=nnz(frontier_exp);%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==2));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
@@ -321,6 +322,7 @@ end
         G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
+        explored_map=current_map;
         if G.drawflag==1
             G.axis=imagesc(current_map); %Show map that updates as robots explore
         end

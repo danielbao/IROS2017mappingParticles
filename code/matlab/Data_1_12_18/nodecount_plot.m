@@ -12,7 +12,7 @@ for i=100:50:100%size(temprun,1) %set the range of values for the function. For 
         plot(tempnodecount,'g');
     end
 end
-title('Nodecounts for 100 robots in leaf map');
+title('Total explored spaces for 100 robots in leaf map');
 xlabel('Moves');
-ylabel('Nodes at each move');
+ylabel('Total explored spaces at each move');
 alpha(0.5); 

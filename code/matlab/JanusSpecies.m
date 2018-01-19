@@ -52,7 +52,7 @@ G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
-G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
+G.drawflag=0; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
@@ -124,6 +124,7 @@ map_3=zeros(size(G.obstacle_pos));
 map_4=zeros(size(G.obstacle_pos));
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
+explored_map= zeros(size(G.obstacle_pos));
 axis equal
 axis tight
 set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
@@ -158,7 +159,7 @@ end
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=nnz(frontier_exp);%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
@@ -524,6 +525,7 @@ end
             set(G.k,'SizeData',1.1*markerWidth^2);
             %Reset the flag b/c this is only needed once
         end
+        explored_map=current_map;
         if G.drawflag==1
 %             G.axis=imagesc(current_map); This really slows drawing down
 %             even though it probably requires the least effort in looks
