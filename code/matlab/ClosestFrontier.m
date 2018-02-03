@@ -127,12 +127,12 @@ end
         while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
+            moveSeq = BFS_Expansion_AVM_Closest(G.update_map,roboloc,frontier_vec); 
             %The shortest path to a frontier cell is selected by expanding from particles
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=length(find(explored_map==0|explored_map==2));%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==2|explored_map==4));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
@@ -318,7 +318,7 @@ end
         G.update_map=zeros(size(current_map));%reset update_map
         G.update_map(current_map==3)=1;%Reset our unknowns and obstacles to be undiscovered
         G.update_map(current_map==1)=1;%Reset undiscovered to be undiscovered
-        G.boundvec=find(current_map== 4);%Set boundaries to be frontiers
+        G.boundvec=find(current_map== 4);%Set boundaries to be black
         G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
@@ -334,7 +334,7 @@ end
         else
             FC=' frontier cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells'])
+        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(length(find(explored_map==0|explored_map==2|explored_map==4))), FC,', ', num2str(nnz(G.free)), ' free cells'])
     end
 %% SetupWorld setups map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)

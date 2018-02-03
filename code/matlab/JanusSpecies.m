@@ -159,7 +159,7 @@ end
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14));%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14|explored_map==4));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
@@ -553,7 +553,7 @@ end
         else
             FC=' frontier cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(k),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells']);
+        title([num2str(G.movecount), ' moves, ',num2str(k),' particles, ', num2str(length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14|explored_map==4))), FC,', ', num2str(nnz(G.free)), ' free cells']);
         
     end
 %% SetupWorld setups map

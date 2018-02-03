@@ -46,13 +46,13 @@ G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.videoflag=1;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
-MOVIE_NAME =['Closest Frontier_map',num2str(G.mapnum),'_',num2str(k),'robots','_video8']; %Change video name here
+MOVIE_NAME =['ClosestFrontier_demonstration2',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr)]; %Change video name here
 writerObj = VideoWriter(MOVIE_NAME,'MPEG-4');%http://www.mathworks.com/help/matlab/ref/videowriterclass.html
 set(writerObj,'Quality',100);%Default settings for video
 writerObj.FrameRate=30;
@@ -98,14 +98,15 @@ RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to bui
 map_expected=zeros(size(G.obstacle_pos)); %Set zeros initially. We update the expected location of each particle in this map
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
+explored_map= zeros(size(G.obstacle_pos));
 updateMap() %Update the map with the information from all the seperate maps
-set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
 G.h=scatter(G.robscaty,G.robscatx,'r','filled');
 axis equal
 axis tight
+set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
 updateTitle() %Update the values displayed in the title
 hold on
-
+updateMap()
 if G.drawflag==1
     drawcirc()
 end
@@ -126,12 +127,12 @@ end
         while(nnz(frontier_exp)>0&&G.movecount<max_steps)%While there are still unknowns, DFS begins
             frontier_vec=G.boundvec; %Refresh local variable to global current locations of frontiers
             roboloc=G.roboloc; %Refresh local locations to global current locations of robots
-            moveSeq = DijkstraForBoundary_mod(G.update_map,roboloc,frontier_vec); 
+            moveSeq = BFS_Expansion_AVM(G.update_map,roboloc,frontier_vec); 
             %The shortest path to a frontier cell is selected by expanding from particles
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=nnz(frontier_exp);%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==2));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
@@ -321,6 +322,7 @@ end
         G.roboloc=find(current_map== 2);%Set robot locations to where they have visited
         [G.robscatx,G.robscaty]=find(current_map== 2);%Store scatter plot locations of the robot
         colormap(G.colormap(unique(current_map)+1,:));
+        explored_map=current_map;
         if G.drawflag==1
             G.axis=imagesc(current_map); %Show map that updates as robots explore
         end
@@ -328,11 +330,11 @@ end
 %% updateTitle updates title when called
     function updateTitle()
         if nnz(frontier_exp)==1%Grammatical condition if there is only 1 frontier cell
-            FC=' frontier cell';
+            FC=' explored cell';
         else
-            FC=' frontier cells';
+            FC=' explored cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(nnz( frontier_exp)), FC,', ', num2str(nnz(G.free)), ' free cells'])
+        title([num2str(G.movecount), ' moves, ',num2str(sum(G.robvec)),' particles, ', num2str(length(find(explored_map==0|explored_map==2))), FC,', ', num2str(nnz(G.free)), ' free cells Itr',num2str(itr)])
     end
 %% SetupWorld setups map
     function [blk,free,robvec,Moves] = SetupWorld(mapnum)
