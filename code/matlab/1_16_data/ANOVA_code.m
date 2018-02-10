@@ -16,3 +16,5 @@ for i=100:50:100%size(temprun,1) %set the range of values for the function. For 
     end
 end
 [p,tbl,stats] = anova1(cell_data);
+ylabel(['Total amount of cells explored']);
+xlabel(['Col 1 is n Janus Particles; Col 2 is the same particle']);

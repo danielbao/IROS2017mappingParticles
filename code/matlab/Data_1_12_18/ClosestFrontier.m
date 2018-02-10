@@ -132,7 +132,7 @@ end
             steps = max(0,numel(moveSeq));%Get the minimum number of steps from Dijkstra's
             for mvIn =1:steps%Move to the frontier on all particles
                 moveto(moveSeq(mvIn));
-                nodecount(iter)=length(find(explored_map==0|explored_map==2));%Update the nodes visited in each step
+                nodecount(iter)=length(find(explored_map==0|explored_map==2|explored_map==4));%Update the nodes visited in each step
                 iter=iter+1;
                 makemymovie()
             end %end DFS
