@@ -282,9 +282,9 @@ elseif mapnum==21
         1,1,1,1,0,1,1
         1,0,0,0,0,0,1
         1,1,1,1,1,1,1]);
-elseif mapnum==22%linear map with 5000 free spaces 
-    blk=ones(3,52);
-    for i=2:51
+elseif mapnum==22%linear map with 100 free spaces 
+    blk=ones(3,102);
+    for i=2:101
         blk(2,i)=0;
     end
 elseif mapnum==23%rectangular map with 5000 free spaces 

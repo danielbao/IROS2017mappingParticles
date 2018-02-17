@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,config_flag,starting_config)
+function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,config_flag,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -44,10 +44,10 @@ if nargin<1 %If no inputs are provided
     starting_config=0; % Inputted configuration
     
 end
-G.fig = figure(2);
+G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =27;% Identifier for map, 0-26; look at blockMaps to identify each map
+G.mapnum =21;% Identifier for map, 0-26; look at blockMaps to identify each map
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -60,7 +60,7 @@ G.initflag=1; %flag for first round of initiation; used in updateMap()
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
-MOVIE_NAME =['Closest Frontier_map',num2str(G.mapnum),'_',num2str(k),'robots','_video8']; %Change video name here
+MOVIE_NAME =['JanusDemonstration2_map',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr)]; %Change video name here
 writerObj = VideoWriter(MOVIE_NAME,'MPEG-4');%http://www.mathworks.com/help/matlab/ref/videowriterclass.html
 set(writerObj,'Quality',100);%Default settings for video
 writerObj.FrameRate=30;
@@ -93,6 +93,16 @@ G.colormap = [ 1,1,1; %Empty=white  0
     1,1,1; %robot=white square with red circle 2
     0,0,0;%obstacle=black 3
     0,0,1;%boundary cells/frontier=blue 4
+%     1,1,1;%5
+%     1,1,1;%6
+%     1,1,1;%7
+%     1,1,1;%8
+%     1,1,1;%9
+%     1,1,1;%10
+%     1,1,1;%11
+%     1,1,1;%12
+%     1,1,1;%13
+%     1,1,1;%14
     ];
 if config_flag==1%For using the same configurations as before
     G.robvec=starting_config;
@@ -103,17 +113,17 @@ else
     G.type2loc=zeros(size(G.robvec));
     G.type3loc=zeros(size(G.robvec));
     G.type4loc=zeros(size(G.robvec));
-    G.type1loc(randRobots(1:ceil(k/4)-1))=1;
-    G.type2loc(randRobots(ceil(k/4):ceil(k/2)-1))=1;
-    G.type3loc(randRobots(ceil(k/2):ceil(3*k/4)-1))=1;
-    G.type4loc(randRobots(ceil(3*k/4):k))=1;
-%     G.type4loc(randRobots(1:round(k/2)-1))=1;
-%     G.type1loc(randRobots(round(k/2):k))=1;
-    %having all 4 species has some quirks. Try each one out individually
-    %instead
+    G.type1loc(randRobots(1:ceil(k*p1)))=1;
+    randRobots(1:ceil(k*p1))=[];    
+    G.type2loc(randRobots(1:ceil(k*p2)))=1;
+    randRobots(1:ceil(k*p2)-1)=[];
+    G.type3loc(randRobots(1:ceil(k*p3)))=1;
+    randRobots(1:ceil(k*p3))=[];
+    G.type4loc(randRobots(1:ceil(k*p4)))=1;
+    %Initialized by the probability distributions of each species
     %4 species locations initialized!!
 end
-
+G.robvec=G.type1loc+G.type2loc+G.type3loc+G.type4loc;
 init_config=G.robvec; % We store the first locations (linear indices) of the robots
 % after they're randomized
 RobotVisits=zeros(size(G.obstacle_pos)); %Set blind map to zeros. We want to build path in this map
@@ -124,7 +134,10 @@ map_3=zeros(size(G.obstacle_pos));
 map_4=zeros(size(G.obstacle_pos));
 mapped_obstacles=zeros(size(G.obstacle_pos)); %Map is updated when obstacles are found
 frontier_exp= zeros(size(G.obstacle_pos)); %Map to update the locations of frontiers
+frontier_exp(1,:)=0;
+frontier_exp(3,:)=0;
 explored_map= zeros(size(G.obstacle_pos));
+
 axis equal
 axis tight
 set(gca,'box','off','xTick',[],'ytick',[],'ydir','normal','Visible','on');%Create graph without all of the axes
@@ -178,6 +191,9 @@ end
                 %If the cell has never been visited and isn't an obstacle
                 if RobotVisits(i2,j2) == 0 && mapped_obstacles(i2,j2) == 0
                     frontier_exp(i2,j2)=1;%It's a frontier!
+                    if(G.mapnum==2 && (i2==1||i2==3))
+                        frontier_exp(i2,j2)==0;
+                    end
                 else
                     frontier_exp(i2,j2)=0;%It isn't a frontier!
                 end
@@ -498,16 +514,16 @@ end
            %data set (obstacles, robot locations)
            %Previously refreshing images may be a resource hog; hope
            %fully this approach works better.
-            G.i=scatter(G.Fronty,G.Frontx,'s','b','filled'); 
+%             G.i=scatter(G.Fronty,G.Frontx,'s','b','filled'); 
             %Scatterplot for frontier locations
             G.type1plot=scatter(G.type1y,G.type1x,'o','r','filled'); %Initialize the locations of each particle
             G.type2plot=scatter(G.type2y,G.type2x,'o','g','filled'); 
             G.type3plot=scatter(G.type3y,G.type3x,'o','y','filled'); 
             G.type4plot=scatter(G.type4y,G.type4x,'o','m','filled'); 
             %These are the scatterplots for the robot locations
-            G.j=scatter(G.Obsy,G.Obsx,'s','k','filled');
+%             G.j=scatter(G.Obsy,G.Obsx,'s','k','filled');
             %Scatterplot for obstacle locations
-            G.k=scatter(G.Unky,G.Unkx,'s','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5]);
+%             G.k=scatter(G.Unky,G.Unkx,'s','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5]);
             %Scatterplot for unknown locations
             G.initflag=0;
             currentunits = get(gca,'Units');
@@ -520,14 +536,17 @@ end
             set(G.type2plot,'SizeData',0.8*markerWidth^2);
             set(G.type3plot,'SizeData',0.8*markerWidth^2);
             set(G.type4plot,'SizeData',0.8*markerWidth^2);
-            set(G.i,'SizeData',1.1*markerWidth^2);
-            set(G.j,'SizeData',1.1*markerWidth^2);
-            set(G.k,'SizeData',1.1*markerWidth^2);
+%             set(G.i,'SizeData',1.1*markerWidth^2);
+%             set(G.j,'SizeData',1.1*markerWidth^2);
+%             set(G.k,'SizeData',1.1*markerWidth^2);
             %Reset the flag b/c this is only needed once
         end
         explored_map=current_map;
+        tempmap=current_map;
+        tempmap(tempmap==11|tempmap==12|tempmap==13|tempmap==14)=2;
+        colormap(G.colormap(unique(tempmap)+1,:));
         if G.drawflag==1
-%             G.axis=imagesc(current_map); This really slows drawing down
+            G.axis=imagesc(tempmap); %This really slows drawing down
 %             even though it probably requires the least effort in looks
             currentunits = get(gca,'Units');
             set(gca,'Units','Points');%The points conversion allow for window
@@ -535,25 +554,28 @@ end
             axpos = get(gca,'Position');
             set(gca,'Units', currentunits);
             markerWidth = .8/diff(xlim)*axpos(3); % Calculate Marker width in points
-            set(G.i,'XData',G.Fronty,'Ydata',G.Frontx,'SizeData',1.1*markerWidth^2);
-            set(G.j,'XData',G.Obsy,'Ydata',G.Obsx,'SizeData',1.1*markerWidth^2);
-            set(G.k,'XData',G.Unky,'Ydata',G.Unkx,'SizeData',1.1*markerWidth^2);
+%             set(G.i,'XData',G.Fronty,'Ydata',G.Frontx,'SizeData',1.1*markerWidth^2);
+%             set(G.j,'XData',G.Obsy,'Ydata',G.Obsx,'SizeData',1.1*markerWidth^2);
+%             set(G.k,'XData',G.Unky,'Ydata',G.Unkx,'SizeData',1.1*markerWidth^2);
             set(G.type1plot,'XData',G.type1y,'Ydata',G.type1x,'SizeData',0.8*markerWidth^2);
             set(G.type2plot,'XData',G.type2y,'Ydata',G.type2x,'SizeData',0.8*markerWidth^2);
             set(G.type3plot,'XData',G.type3y,'Ydata',G.type3x,'SizeData',0.8*markerWidth^2);
             set(G.type4plot,'XData',G.type4y,'Ydata',G.type4x,'SizeData',0.8*markerWidth^2);
-%             uistack(G.h,'top');
+            uistack(G.type1plot,'top');
+            uistack(G.type2plot,'top');
+            uistack(G.type3plot,'top');
+            uistack(G.type4plot,'top');
             drawnow %limitrate use limit rate for speed up!!
         end
     end
 %% updateTitle updates title when called
     function updateTitle()
         if nnz(frontier_exp)==1%Grammatical condition if there is only 1 frontier cell
-            FC=' frontier cell';
+            FC=' explored cell';
         else
-            FC=' frontier cells';
+            FC=' explored cells';
         end
-        title([num2str(G.movecount), ' moves, ',num2str(k),' particles, ', num2str(length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14|explored_map==4))), FC,', ', num2str(nnz(G.free)), ' free cells']);
+        title([num2str(G.movecount), ' moves, ',num2str(k),' particles, ', num2str(length(find(explored_map==0|explored_map==11|explored_map==12|explored_map==13|explored_map==14))), FC,', ', num2str(nnz(G.free)), ' free cells Itr ', num2str(itr)]);
         
     end
 %% SetupWorld setups map
