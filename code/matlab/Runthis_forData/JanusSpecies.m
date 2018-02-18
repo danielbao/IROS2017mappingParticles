@@ -52,7 +52,7 @@ G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
-G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
+G.drawflag=0; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
 G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
@@ -106,24 +106,23 @@ G.colormap = [ 1,1,1; %Empty=white  0
     ];
 if config_flag==1%For using the same configurations as before
     G.robvec=starting_config;
-else
-    randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-%% Distribution of robots code
-    G.type1loc=zeros(size(G.robvec));
-    G.type2loc=zeros(size(G.robvec));
-    G.type3loc=zeros(size(G.robvec));
-    G.type4loc=zeros(size(G.robvec));
-    G.type1loc(randRobots(1:ceil(k*p1)))=1;
-    randRobots(1:ceil(k*p1))=[];    
-    G.type2loc(randRobots(1:ceil(k*p2)))=1;
-    randRobots(1:ceil(k*p2))=[];
-    G.type3loc(randRobots(1:ceil(k*p3)))=1;
-    randRobots(1:ceil(k*p3))=[];
-    G.type4loc(randRobots(1:ceil(k*p4)))=1;
-    %Initialized by the probability distributions of each species
-    %4 species locations initialized!!
 end
-disp(['Iteration ', num2str(itr), ' of ', num2str(p1), ' p1 ', num2str(p2), ' p2 ', num2str(p3), ' p3 ', num2str(p4), ' p4' ]);
+randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+%% Distribution of robots code
+G.type1loc=zeros(size(G.robvec));
+G.type2loc=zeros(size(G.robvec));
+G.type3loc=zeros(size(G.robvec));
+G.type4loc=zeros(size(G.robvec));
+G.type1loc(randRobots(1:round(k*p1)))=1;
+randRobots(1:ceil(k*p1))=[];
+G.type2loc(randRobots(1:round(k*p2)))=1;
+randRobots(1:ceil(k*p2))=[];
+G.type3loc(randRobots(1:round(k*p3)))=1;
+randRobots(1:ceil(k*p3))=[];
+G.type4loc(randRobots(1:round(k*p4)))=1;
+%Initialized by the probability distributions of each species
+%4 species locations initialized!!
+disp(['Iteration ', num2str(itr), ' of ', num2str(p1), ' p1 ', num2str(p2), ' p2 ', num2str(p3), ' p3 ', num2str(p4), ' p4 with ', num2str(k)]);
 G.robvec=G.type1loc+G.type2loc+G.type3loc+G.type4loc;
 init_config=G.robvec; % We store the first locations (linear indices) of the robots
 % after they're randomized
