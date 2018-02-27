@@ -2,7 +2,7 @@ run1=struct;
 run2=struct;
 run3=struct;
 run4=struct;
-for i=100:20:400 %set the range of values for the function. For now it will run for no of robots=500,2000
+for i=100:100:4900 %set the range of values for the function. For now it will run for no of robots=500,2000
 %     for j=1:50 %set the numner of iterations for the function
 %         [janus2temprun(i,j).movecount,janus2temprun(i,j).k,janus2temprun(i,j).nodecount,janus2temprun(i,j).init_config] = JanusSpecies(i,j,250,0,0.5,0,0.5,0,0); 
 %         clf
@@ -32,11 +32,11 @@ shadedErrorBar([run2.k],[run2.movecount],[run2.stderr],'b');
 shadedErrorBar([run3.k],[run3.movecount],[run3.stderr],'r');
 shadedErrorBar([run4.k],[run4.movecount],[run4.stderr],'c');
 alpha 0.5;
-title('2D Simulation for Janus Particles on 500 space Rectangular Map');
+title('2D Simulation for Janus Particles on 5000 space Leaf Map');
 xlabel('Number of Particles (n)');
 ylabel('Number of Moves (k)');
 h=findobj(gca,'Type','Line');
-legend([h(10) h(7) h(4) h(1)], '1 Type Janus', '2 Type Janus','3 Type Janus', '4 Type Janus')
+legend([h(10) h(7) h(4) h(1)], '1 Type Janus', '2 Type Janus', '3 Type Janus','4 Type Janus')
 
 
 %Instructions of getting a good legend for the right colors
