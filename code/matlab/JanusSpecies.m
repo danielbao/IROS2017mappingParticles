@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,config_flag,p1,p2,p3,p4,starting_config)
+function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -47,7 +47,11 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =21;% Identifier for map, 0-26; look at blockMaps to identify each map
+if map>0
+    G.mapnum=map;
+else
+    G.mapnum =21;% Identifier for map, 0-26; look at blockMaps to identify each map
+end
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
@@ -311,7 +315,7 @@ end
                 else
                     rvec3Out(ni)=rvec3In(ni);%Update result with old location
                 end
-                rvec1In(ni)=rvec3Out(ni);%Set old locations with new location
+                rvec3In(ni)=rvec3Out(ni);%Set old locations with new location
             end
         end
         %type 4 collision check
@@ -321,7 +325,7 @@ end
                     %If there isn't a species of type 1,2,3, or 4 that will move to
                     %that location
                     rvec4Out(G.Moves(ni,mv4)) = rvec4In(ni);%Set result to new location
-                    rvec1In(ni)=0;%Clear previous location for robot
+                    rvec4In(ni)=0;%Clear previous location for robot
                 else
                     rvec4Out(ni)=rvec4In(ni);%Keep old location
                 end

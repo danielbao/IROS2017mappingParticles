@@ -47,7 +47,11 @@ end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
 %settings may produce better results
-G.mapnum =23;% Identifier for map, 0-26; look at blockMaps to identify each map
+if map>0
+    G.mapnum=map;
+else
+    G.mapnum =21;% Identifier for map, 0-26; look at blockMaps to identify each map
+end
 G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
