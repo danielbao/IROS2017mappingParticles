@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,config_flag,p1,p2,p3,p4,starting_config)
+function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -42,7 +42,7 @@ if nargin<1 %If no inputs are provided
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
     starting_config=0; % Inputted configuration
-    
+    fill_flag=0;
 end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
@@ -56,18 +56,18 @@ G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
-G.drawflag=0; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
+G.videoflag=1;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
 G.initflag=1; %flag for first round of initiation; used in updateMap()
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
-MOVIE_NAME =['JanusDemonstration2_map',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr)]; %Change video name here
+MOVIE_NAME =['JanusDemonstration_map',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr),'p1',num2str(p1)]; %Change video name here
 writerObj = VideoWriter(MOVIE_NAME,'MPEG-4');%http://www.mathworks.com/help/matlab/ref/videowriterclass.html
 set(writerObj,'Quality',100);%Default settings for video
-writerObj.FrameRate=30;
+writerObj.FrameRate=10;
 open(writerObj);
     function makemymovie()% Call after each frame is generated
         if G.videoflag==1
@@ -111,19 +111,31 @@ G.colormap = [ 1,1,1; %Empty=white  0
 if config_flag==1%For using the same configurations as before
     G.robvec=starting_config;
 end
-randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+switch fill_flag
+    case 1
+        addresses=randperm(numel(G.robvec)); %randomize robots in their positions
+    case 2
+        G.robvec=floodfill(G.obstacle_pos,k); 
+        addresses=find(G.robvec);
+
+    case 3
+        G.robvec=regionfill(G.obstacle_pos,k);
+        addresses=find(G.robvec);
+
+end
+randRobots=randperm(k);
 %% Distribution of robots code
 G.type1loc=zeros(size(G.robvec));
 G.type2loc=zeros(size(G.robvec));
 G.type3loc=zeros(size(G.robvec));
 G.type4loc=zeros(size(G.robvec));
-G.type1loc(randRobots(1:round(k*p1)))=1;
+G.type1loc(addresses(randRobots(1:round(k*p1))))=1;
 randRobots(1:ceil(k*p1))=[];
-G.type2loc(randRobots(1:round(k*p2)))=1;
+G.type2loc(addresses(randRobots(1:round(k*p2))))=1;
 randRobots(1:ceil(k*p2))=[];
-G.type3loc(randRobots(1:round(k*p3)))=1;
+G.type3loc(addresses(randRobots(1:round(k*p3))))=1;
 randRobots(1:ceil(k*p3))=[];
-G.type4loc(randRobots(1:round(k*p4)))=1;
+G.type4loc(addresses(randRobots(1:round(k*p4))))=1;
 %Initialized by the probability distributions of each species
 %4 species locations initialized!!
 disp(['Iteration ', num2str(itr), ' of ', num2str(p1), ' p1 ', num2str(p2), ' p2 ', num2str(p3), ' p3 ', num2str(p4), ' p4 with ', num2str(k)]);
@@ -316,7 +328,7 @@ end
                 else
                     rvec3Out(ni)=rvec3In(ni);%Update result with old location
                 end
-                rvec1In(ni)=rvec3Out(ni);%Set old locations with new location
+                rvec3In(ni)=rvec3Out(ni);%Set old locations with new location
             end
         end
         %type 4 collision check
@@ -326,7 +338,7 @@ end
                     %If there isn't a species of type 1,2,3, or 4 that will move to
                     %that location
                     rvec4Out(G.Moves(ni,mv4)) = rvec4In(ni);%Set result to new location
-                    rvec1In(ni)=0;%Clear previous location for robot
+                    rvec4In(ni)=0;%Clear previous location for robot
                 else
                     rvec4Out(ni)=rvec4In(ni);%Keep old location
                 end

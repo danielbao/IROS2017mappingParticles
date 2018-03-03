@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,p1,p2,p3,p4,starting_config)
+function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -42,7 +42,7 @@ if nargin<1 %If no inputs are provided
     config_flag=0; % Whether or not to use the previous configuration
     max_steps=250; % Maximum number of steps we want to take
     starting_config=0; % Inputted configuration
-    
+    fill_flag=0;
 end
 G.fig = figure(1);
 set(gcf,'Renderer','OpenGL');%use OpenGL for graphs, not sure if other
@@ -110,23 +110,31 @@ G.colormap = [ 1,1,1; %Empty=white  0
     ];
 if config_flag==1%For using the same configurations as before
     G.robvec=starting_config;
-else
-    randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
-%% Distribution of robots code
-    G.type1loc=zeros(size(G.robvec));
-    G.type2loc=zeros(size(G.robvec));
-    G.type3loc=zeros(size(G.robvec));
-    G.type4loc=zeros(size(G.robvec));
-    G.type1loc(randRobots(1:ceil(k*p1)))=1;
-    randRobots(1:ceil(k*p1))=[];    
-    G.type2loc(randRobots(1:ceil(k*p2)))=1;
-    randRobots(1:ceil(k*p2)-1)=[];
-    G.type3loc(randRobots(1:ceil(k*p3)))=1;
-    randRobots(1:ceil(k*p3))=[];
-    G.type4loc(randRobots(1:ceil(k*p4)))=1;
-    %Initialized by the probability distributions of each species
-    %4 species locations initialized!!
 end
+switch fill_flag
+    case 1
+        randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+    case 2
+        randRobots=floodfill(G.obstacle_pos,k);
+    case 3
+        randRobots=regionfill(G.obstacle_pos,k);
+    otherwise
+        randRobots=randperm(numel(G.robvec));
+end
+%% Distribution of robots code
+G.type1loc=zeros(size(G.robvec));
+G.type2loc=zeros(size(G.robvec));
+G.type3loc=zeros(size(G.robvec));
+G.type4loc=zeros(size(G.robvec));
+G.type1loc(randRobots(1:ceil(k*p1)))=1;
+randRobots(1:ceil(k*p1))=[];
+G.type2loc(randRobots(1:ceil(k*p2)))=1;
+randRobots(1:ceil(k*p2)-1)=[];
+G.type3loc(randRobots(1:ceil(k*p3)))=1;
+randRobots(1:ceil(k*p3))=[];
+G.type4loc(randRobots(1:ceil(k*p4)))=1;
+%Initialized by the probability distributions of each species
+%4 species locations initialized!!
 G.robvec=G.type1loc+G.type2loc+G.type3loc+G.type4loc;
 init_config=G.robvec; % We store the first locations (linear indices) of the robots
 % after they're randomized
