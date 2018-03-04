@@ -1,7 +1,8 @@
-function robvec=floodfill(map,k)
-free=find(map==0);
-start=randsample(numel(free),1);
-start=free(start);
+function robvec=floodfill(map,k,index)
+% free=find(map==0);
+% start=randsample(numel(free),1);
+% start=free(start);
+start=index;
 [i,j]=ind2sub(size(map),start);
 e=sub2ind(size(map),i,j+1);
 w=sub2ind(size(map),i,j-1);

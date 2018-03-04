@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,p1,p2,p3,p4,starting_config)
+function [movecount,k,nodecount,init_config,fillseed] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,fill,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -114,14 +114,30 @@ end
 switch fill_flag
     case 1
         addresses=randperm(numel(G.robvec)); %randomize robots in their positions
+        fillseed=0;
     case 2
-        G.robvec=floodfill(G.obstacle_pos,k); 
+        free=find(G.obstacle_pos==0);
+        start=randsample(free,1);
+        start=free(start);
+        if fill==0
+            start=fill;%Override start place for fill with this command
+        end
+        G.robvec=floodfill(G.obstacle_pos,k,start); 
         addresses=find(G.robvec);
-
+        fillseed=start;
+        %This calls flood fill with its respective fill if passed on
+        %Else it generates a random one and stores it in fillseed which
+        %Is sent back to the structures
     case 3
-        G.robvec=regionfill(G.obstacle_pos,k);
+        free=find(G.obstacle_pos==0);
+        start=randsample(free,1);
+        start=free(start);
+        if fill==0
+            start=fill;%Override start place for fill with this command
+        end        
+        G.robvec=regionfill(G.obstacle_pos,k,start);
         addresses=find(G.robvec);
-
+        fillseed=start;
 end
 randRobots=randperm(k);
 %% Distribution of robots code

@@ -1,7 +1,8 @@
-function robvec=regionfill(map,k)
-free=find(map==0);
-start=randsample(numel(free),1);
-start=free(start);
+function robvec=regionfill(map,k,index)
+% free=find(map==0);
+% start=randsample(numel(free),1);
+% start=free(start);
+start=index
 [starti,startj]=ind2sub(size(map),start);
 [freei,freej]=ind2sub(size(map),free);
 % distmap=zeros(1,2);
