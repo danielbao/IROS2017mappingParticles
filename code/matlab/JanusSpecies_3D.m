@@ -25,10 +25,10 @@ if nargin<1
     number=1;
     map=0;
     max_steps=250;
-    p1=0.25;
-    p2=0.25;
-    p3=0.25;
-    p4=0.25;
+    p1=0.5;
+    p2=0.5;
+    p3=0;
+    p4=0;
     p5=0;
     p6=0;
     config_flag=0;
@@ -249,7 +249,7 @@ end
             otherwise
                 disp('bad mv');
         end
-        if mv==1 || mv==4 || mv==5%Collision check for left and down
+        if mv==1 || mv==4 || mv==5%Collision check for left and down and up?
             for ni = 1:numel(rvec1In)%G.Moves(ni,mv) returns 1 if there is a free space after the movement mv
                 if rvec1In(G.Moves(ni,mv)) == 0 && rvec2In(G.Moves(ni,mv)) == 0 && rvec3In(G.Moves(ni,mv)) == 0 && rvec4In(G.Moves(ni,mv)) == 0 && rvec5In(G.Moves(ni,mv)) == 0 && rvec6In(G.Moves(ni,mv)) == 0 
                     %If there isn't any species at that location
