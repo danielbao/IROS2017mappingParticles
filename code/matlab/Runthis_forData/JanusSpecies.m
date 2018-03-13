@@ -57,7 +57,7 @@ G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
 G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=1;% Default 0, set to 1 if video is to be made
+G.videoflag=0;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
 G.initflag=1; %flag for first round of initiation; used in updateMap()
@@ -119,7 +119,7 @@ switch fill_flag
         free=find(G.obstacle_pos==0);
         start=randsample(free,1);
         start=free(start);
-        if fill==0
+        if fill~=0
             start=fill;%Override start place for fill with this command
         end
         G.robvec=floodfill(G.obstacle_pos,k,start); 

@@ -1,4 +1,4 @@
-function [movecount,k,nodecount,init_config] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,p1,p2,p3,p4,starting_config)
+function [movecount,k,nodecount,init_config,fillseed] = JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,fill,p1,p2,p3,p4,starting_config)
 % ClosestFrontier is a demonstration of mapping a completely connected
 % and bounded 2D discrete grid space with k particles that move uniformly.
 % The permissible moves are left, right, up and down. Each move is one pixel
@@ -56,18 +56,18 @@ G.movecount = 0;%Number of moves made
 G.movetyp = [-1,0;0,1;1,0;0,-1];%Array for making moves;
                                 %Each row is up, right, left, down
 movecount=G.movecount;
-G.drawflag=0; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
-G.videoflag=0;% Default 0, set to 1 if video is to be made
+G.drawflag=1; % Default 1, draw G.fig on. Set 0 for draw G.fig off.
+G.videoflag=1;% Default 0, set to 1 if video is to be made
 G.playflag=0;%flag for user playing with keyboard inputs
 G.valueflag=0; %flag for user inputting values
 G.initflag=1; %flag for first round of initiation; used in updateMap()
 clc
 %% Making a video demonstration. makemymovie gets the current frame of imge and adds to video file
 format compact
-MOVIE_NAME =['JanusDemonstration2_map',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr)]; %Change video name here
+MOVIE_NAME =['JanusDemonstration_map',num2str(G.mapnum),'_',num2str(k),'robots','_video',num2str(itr),'p1',num2str(p1)]; %Change video name here
 writerObj = VideoWriter(MOVIE_NAME,'MPEG-4');%http://www.mathworks.com/help/matlab/ref/videowriterclass.html
 set(writerObj,'Quality',100);%Default settings for video
-writerObj.FrameRate=30;
+writerObj.FrameRate=10;
 open(writerObj);
     function makemymovie()% Call after each frame is generated
         if G.videoflag==1
@@ -113,28 +113,48 @@ if config_flag==1%For using the same configurations as before
 end
 switch fill_flag
     case 1
-        randRobots=randperm(numel(G.robvec)); %randomize robots in their positions
+        addresses=randperm(numel(G.robvec)); %randomize robots in their positions
+        fillseed=0;
     case 2
-        randRobots=floodfill(G.obstacle_pos,k);
+        free=find(G.obstacle_pos==0);
+        start=randsample(free,1);
+        start=free(start);
+        if fill==0
+            start=fill;%Override start place for fill with this command
+        end
+        G.robvec=floodfill(G.obstacle_pos,k,start); 
+        addresses=find(G.robvec);
+        fillseed=start;
+        %This calls flood fill with its respective fill if passed on
+        %Else it generates a random one and stores it in fillseed which
+        %Is sent back to the structures
     case 3
-        randRobots=regionfill(G.obstacle_pos,k);
-    otherwise
-        randRobots=randperm(numel(G.robvec));
+        free=find(G.obstacle_pos==0);
+        start=randsample(free,1);
+        start=free(start);
+        if fill==0
+            start=fill;%Override start place for fill with this command
+        end        
+        G.robvec=regionfill(G.obstacle_pos,k,start);
+        addresses=find(G.robvec);
+        fillseed=start;
 end
+randRobots=randperm(k);
 %% Distribution of robots code
 G.type1loc=zeros(size(G.robvec));
 G.type2loc=zeros(size(G.robvec));
 G.type3loc=zeros(size(G.robvec));
 G.type4loc=zeros(size(G.robvec));
-G.type1loc(randRobots(1:ceil(k*p1)))=1;
+G.type1loc(addresses(randRobots(1:round(k*p1))))=1;
 randRobots(1:ceil(k*p1))=[];
-G.type2loc(randRobots(1:ceil(k*p2)))=1;
-randRobots(1:ceil(k*p2)-1)=[];
-G.type3loc(randRobots(1:ceil(k*p3)))=1;
+G.type2loc(addresses(randRobots(1:round(k*p2))))=1;
+randRobots(1:ceil(k*p2))=[];
+G.type3loc(addresses(randRobots(1:round(k*p3))))=1;
 randRobots(1:ceil(k*p3))=[];
-G.type4loc(randRobots(1:ceil(k*p4)))=1;
+G.type4loc(addresses(randRobots(1:round(k*p4))))=1;
 %Initialized by the probability distributions of each species
 %4 species locations initialized!!
+disp(['Iteration ', num2str(itr), ' of ', num2str(p1), ' p1 ', num2str(p2), ' p2 ', num2str(p3), ' p3 ', num2str(p4), ' p4 with ', num2str(k)]);
 G.robvec=G.type1loc+G.type2loc+G.type3loc+G.type4loc;
 init_config=G.robvec; % We store the first locations (linear indices) of the robots
 % after they're randomized
@@ -189,6 +209,7 @@ end
                 makemymovie()
             end %end DFS
         end
+        movecount=G.movecount;
         for i=1:5
             makemymovie()
         end
@@ -203,8 +224,8 @@ end
                 %If the cell has never been visited and isn't an obstacle
                 if RobotVisits(i2,j2) == 0 && mapped_obstacles(i2,j2) == 0
                     frontier_exp(i2,j2)=1;%It's a frontier!
-                    if(G.mapnum==2 && (i2==1||i2==3))
-                        frontier_exp(i2,j2)==0;
+                    if(G.mapnum==22 && (i2==1||i2==3))
+                        frontier_exp(i2,j2)=0;
                     end
                 else
                     frontier_exp(i2,j2)=0;%It isn't a frontier!
@@ -530,7 +551,7 @@ end
             %Scatterplot for frontier locations
             G.type1plot=scatter(G.type1y,G.type1x,'o','r','filled'); %Initialize the locations of each particle
             G.type2plot=scatter(G.type2y,G.type2x,'o','g','filled'); 
-            G.type3plot=scatter(G.type3y,G.type3x,'o','y','filled'); 
+            G.type3plot=scatter(G.type3y,G.type3x,'o','c','filled'); 
             G.type4plot=scatter(G.type4y,G.type4x,'o','m','filled'); 
             %These are the scatterplots for the robot locations
 %             G.j=scatter(G.Obsy,G.Obsx,'s','k','filled');

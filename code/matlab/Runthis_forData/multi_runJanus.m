@@ -1,5 +1,6 @@
 %Function to run experiments multiple times
 function multi_runJanus()
+setenv('TEMP',pwd);
 janus4temprun=struct;
 janus3temprun=struct;
 janus2temprun=struct;
@@ -15,11 +16,12 @@ janus1temprun=struct;
 
 for i=100:50:100 %set the range of values for the function. For now it will run for no of robots=500,2000
     for j=1:1 %set the numner of iterations for the function
-        [janus1temprun(i,j).movecount,janus1temprun(i,j).k,janus1temprun(i,j).nodecount,janus1temprun(i,j).init_config] = JanusSpecies(i,j,Inf,29,0,2,1,0,0,0,0); 
+        %                                                                                                      JanusSpecies(k,itr,max_steps,map,config_flag,fill_flag,fill,p1,p2,p3,p4,starting_config)
+        [janus1temprun(i,j).movecount,janus1temprun(i,j).k,janus1temprun(i,j).nodecount,janus1temprun(i,j).init_config,janus1temprun(i,j).fillseed] = JanusSpecies(i,j,10,23,0,2,0,1,0,0,0,0); 
         %specify which function is used. Currently it will run the random mapping
-        [janus2temprun(i,j).movecount,janus2temprun(i,j).k,janus2temprun(i,j).nodecount,janus2temprun(i,j).init_config] = JanusSpecies(i,j,Inf,29,1,2,0.5,0,0.5,0,janus1temprun(i,j).init_config); 
-        [janus3temprun(i,j).movecount,janus3temprun(i,j).k,janus3temprun(i,j).nodecount,janus3temprun(i,j).init_config] = JanusSpecies(i,j,Inf,29,1,2,0.33,0.33,0.34,0,janus1temprun(i,j).init_config); 
-        [janus4temprun(i,j).movecount,janus4temprun(i,j).k,janus4temprun(i,j).nodecount,janus4temprun(i,j).init_config] = JanusSpecies(i,j,Inf,29,1,2,0.25,0.25,0.25,0.25,janus1temprun(i,j).init_config); 
+        [janus2temprun(i,j).movecount,janus2temprun(i,j).k,janus2temprun(i,j).nodecount,janus2temprun(i,j).init_config,janus2temprun(i,j).fillseed] = JanusSpecies(i,j,10,23,1,2,janus1temprun(i,j).fillseed,0.5,0,0.5,0,janus1temprun(i,j).init_config); 
+        [janus3temprun(i,j).movecount,janus3temprun(i,j).k,janus3temprun(i,j).nodecount,janus3temprun(i,j).init_config,janus3temprun(i,j).fillseed] = JanusSpecies(i,j,10,23,1,2,janus1temprun(i,j).fillseed,0.33,0.33,0.34,0,janus1temprun(i,j).init_config); 
+        [janus4temprun(i,j).movecount,janus4temprun(i,j).k,janus4temprun(i,j).nodecount,janus4temprun(i,j).init_config,janus4temprun(i,j).fillseed] = JanusSpecies(i,j,10,23,1,2,janus1temprun(i,j).fillseed,0.25,0.25,0.25,0.25,janus1temprun(i,j).init_config); 
         
         clf
         save('Janus4_2D_Leaf_temp.mat','janus4temprun');
